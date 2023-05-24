@@ -6,9 +6,9 @@ dataSources:
     name: StakeTogether
     network: goerli
     source:
-      address: "0x46025125C91a8c30aF09081e8B75D6f3b0962b66"
+      address: '0x56124AEB596c0192D3e3fE312763A01D6BAB9dae'
       abi: StakeTogether
-      startBlock: 9049771
+      startBlock: 9053000
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -23,4 +23,8 @@ dataSources:
           handler: handleCommunityAdded
         - event: CommunityRemoved(address)
           handler: handleCommunityRemoved
+        - event: Deposit(indexed address,uint256,uint256,address,address)
+          handler: handleDeposit
+        - event: Withdraw(indexed address,uint256,uint256,address)
+          handler: handleWithdraw
       file: ./src/stake-together.ts

@@ -1,5 +1,21 @@
+type Account @entity {
+  id: ID!
+  address: Bytes!
+  balance: BigInt!
+  shares: BigInt!
+
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
 type Community @entity {
   id: ID!
-  account: Bytes!
+  address: Bytes!
   active: Boolean!
+  delegatedShares: BigInt!
+
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
 }
