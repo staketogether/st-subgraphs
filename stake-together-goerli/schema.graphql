@@ -28,6 +28,7 @@ type Account @entity {
   address: Bytes!
   shares: BigInt!
   amount: BigInt!
+  delegated: [Delegation!]! @derivedFrom(field: "delegator")
 
   blockNumber: BigInt!
   blockTimestamp: BigInt!
@@ -42,6 +43,7 @@ type Community @entity {
   active: Boolean!
   delegatedShares: BigInt!
   delegatedAmount: BigInt!
+  delegates: [Delegation!]! @derivedFrom(field: "delegated")
 
   rewardsShares: BigInt!
   rewardsAmount: BigInt!
@@ -57,6 +59,7 @@ type Delegation @entity {
 
   delegator: Account!
   delegated: Community!
+
   shares: BigInt!
   amount: BigInt!
 
