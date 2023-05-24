@@ -71,7 +71,6 @@ export function handleDeposit(event: Deposit): void {
     account = new Account(accountId)
     account.st = 'st'
     account.address = event.params.account
-    account.balance = event.params.amount
     account.shares = event.params.shares
     account.amount = getPooledEthByShares(event.params.shares)
     account.blockNumber = event.block.number
@@ -79,7 +78,6 @@ export function handleDeposit(event: Deposit): void {
     account.transactionHash = event.transaction.hash
     account.save()
   } else {
-    account.balance = account.balance.plus(event.params.amount)
     account.shares = account.shares.plus(event.params.shares)
     account.amount = getPooledEthByShares(account.shares)
     account.save()
@@ -127,7 +125,6 @@ export function handleWithdraw(event: Withdraw): void {
   let accountId = event.params.account.toHexString()
   let account = Account.load(accountId)
   if (account != null) {
-    account.balance = account.balance.minus(event.params.amount)
     account.shares = account.shares.minus(event.params.shares)
     account.amount = getPooledEthByShares(account.shares)
     account.save()
