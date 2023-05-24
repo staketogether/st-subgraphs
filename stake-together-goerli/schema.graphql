@@ -3,7 +3,6 @@ type Account @entity {
   address: Bytes!
   balance: BigInt!
   shares: BigInt!
-
   blockNumber: BigInt!
   blockTimestamp: BigInt!
   transactionHash: Bytes!
@@ -14,6 +13,17 @@ type Community @entity {
   address: Bytes!
   active: Boolean!
   delegatedShares: BigInt!
+
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
+type Delegation @entity {
+  id: ID!
+  delegator: Account!
+  delegated: Community!
+  shares: BigInt!
 
   blockNumber: BigInt!
   blockTimestamp: BigInt!

@@ -5,7 +5,7 @@ import {
   Deposit,
   Withdraw
 } from '../generated/StakeTogether/StakeTogether'
-import { Account, Community } from '../generated/schema'
+import { Account, Community, Delegation } from '../generated/schema'
 
 export function handleCommunityAdded(event: CommunityAdded): void {
   let id = event.params.account.toHexString()
@@ -36,6 +36,7 @@ export function handleCommunityRemoved(event: CommunityRemoved): void {
 }
 
 export function handleDeposit(event: Deposit): void {
+  // Account -------------------------------------
   let accountId = event.params.account.toHexString()
   let account = Account.load(accountId)
   if (account == null) {
@@ -48,30 +49,58 @@ export function handleDeposit(event: Deposit): void {
     account.transactionHash = event.transaction.hash
     account.save()
   } else {
+    account.balance = account.balance.plus(event.params.amount)
+    account.shares = account.shares.plus(event.params.shares)
+    account.save()
   }
-  // --------------------------------------------
+  // Community -----------------------------------
   let communityId = event.params.account.toHexString()
   let community = Community.load(communityId)
   if (community != null) {
     community.delegatedShares = event.params.shares
     community.save()
   }
+  // Delegation ----------------------------------
+  let delegationId = `${accountId}-${communityId}}`
+  let delegation = Delegation.load(delegationId)
+  if (delegation == null) {
+    if (account != null && community != null) {
+      delegation = new Delegation(delegationId)
+      delegation.delegator = account.address.toHexString()
+      delegation.delegated = community.address.toHexString()
+      delegation.shares = event.params.shares
+      delegation.blockNumber = event.block.number
+      delegation.blockTimestamp = event.block.timestamp
+      delegation.transactionHash = event.transaction.hash
+      delegation.save()
+    }
+  } else {
+    delegation.shares = delegation.shares.plus(event.params.shares)
+    delegation.save()
+  }
 }
 
 export function handleWithdraw(event: Withdraw): void {
+  // Account ------------------------------------
   let accountId = event.params.account.toHexString()
   let account = Account.load(accountId)
   if (account != null) {
     account.balance = account.balance.minus(event.params.amount)
     account.shares = account.shares.minus(event.params.shares)
-
     account.save()
   }
-  // --------------------------------------------
+  // Community -----------------------------------
   let communityId = event.params.account.toHexString()
   let community = Community.load(communityId)
   if (community != null) {
     community.delegatedShares = community.delegatedShares.minus(event.params.shares)
     community.save()
+  }
+  // Delegation ----------------------------------
+  let delegationId = `${accountId}-${communityId}}`
+  let delegation = Delegation.load(delegationId)
+  if (delegation != null) {
+    delegation.shares = delegation.shares.minus(event.params.shares)
+    delegation.save()
   }
 }
