@@ -5,9 +5,16 @@ type StakeTogether @entity {
   communities: [Community!]! @derivedFrom(field: "st")
   delegations: [Delegation!]! @derivedFrom(field: "st")
 
-  totalEth: BigInt!
+  ethBalance: BigInt!
+  clBalance: BigInt!
+  trBalance: BigInt!
+  withdrawalsBalance: BigInt!
+
   totalShares: BigInt!
   totalDelegatedShares: BigInt!
+
+  stakeTogetherFeeRecipient: Bytes
+  operatorFeeRecipient: Bytes
 
   blockNumber: BigInt!
   blockTimestamp: BigInt!
@@ -19,8 +26,8 @@ type Account @entity {
   st: StakeTogether!
 
   address: Bytes!
-  balance: BigInt!
   shares: BigInt!
+  amount: BigInt!
 
   blockNumber: BigInt!
   blockTimestamp: BigInt!
@@ -34,6 +41,10 @@ type Community @entity {
   address: Bytes!
   active: Boolean!
   delegatedShares: BigInt!
+  delegatedAmount: BigInt!
+
+  rewardsShares: BigInt!
+  rewardsAmount: BigInt!
 
   blockNumber: BigInt!
   blockTimestamp: BigInt!
@@ -47,6 +58,7 @@ type Delegation @entity {
   delegator: Account!
   delegated: Community!
   shares: BigInt!
+  amount: BigInt!
 
   blockNumber: BigInt!
   blockTimestamp: BigInt!

@@ -25,8 +25,12 @@ dataSources:
           handler: handleCommunityAdded
         - event: CommunityRemoved(address)
           handler: handleCommunityRemoved
+        - event: ConsensusLayerBalanceUpdated(uint256)
+          handler: handleConsensusLayerBalanceUpdated
         - event: Deposit(indexed address,uint256,uint256,address,address)
           handler: handleDeposit
+        - event: TransferRewards(indexed address,indexed address,uint256)
+          handler: handleTransferRewards
         - event: Withdraw(indexed address,uint256,uint256,address)
           handler: handleWithdraw
       file: ./src/stake-together.ts
