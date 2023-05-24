@@ -1,11 +1,26 @@
 import { BigInt } from '@graphprotocol/graph-ts'
 import {
+  Bootstrap,
   CommunityAdded,
   CommunityRemoved,
   Deposit,
   Withdraw
 } from '../generated/StakeTogether/StakeTogether'
-import { Account, Community, Delegation } from '../generated/schema'
+import { Account, Community, Delegation, StakeTogether } from '../generated/schema'
+
+export function handleBootstrap(event: Bootstrap): void {
+  let st = new StakeTogether('st')
+
+  st.totalEth = event.params.balance
+  st.totalShares = event.params.balance
+  st.totalDelegatedShares = event.params.balance
+
+  st.blockNumber = event.block.number
+  st.blockTimestamp = event.block.timestamp
+  st.transactionHash = event.transaction.hash
+
+  st.save()
+}
 
 export function handleCommunityAdded(event: CommunityAdded): void {
   let id = event.params.account.toHexString()
@@ -14,6 +29,7 @@ export function handleCommunityAdded(event: CommunityAdded): void {
   if (community == null) {
     community = new Community(id)
   }
+  community.st = 'st'
   community.address = event.params.account
   community.active = true
   community.delegatedShares = BigInt.fromI32(0)
@@ -41,6 +57,7 @@ export function handleDeposit(event: Deposit): void {
   let account = Account.load(accountId)
   if (account == null) {
     account = new Account(accountId)
+    account.st = 'st'
     account.address = event.params.account
     account.balance = event.params.amount
     account.shares = event.params.shares
@@ -54,18 +71,20 @@ export function handleDeposit(event: Deposit): void {
     account.save()
   }
   // Community -----------------------------------
-  let communityId = event.params.account.toHexString()
+  let communityId = event.params.delegated.toHexString()
   let community = Community.load(communityId)
   if (community != null) {
     community.delegatedShares = event.params.shares
     community.save()
   }
   // Delegation ----------------------------------
-  let delegationId = `${accountId}-${communityId}}`
+  let delegationId = `${accountId}-${communityId}`
+
   let delegation = Delegation.load(delegationId)
   if (delegation == null) {
     if (account != null && community != null) {
       delegation = new Delegation(delegationId)
+      delegation.st = 'st'
       delegation.delegator = account.address.toHexString()
       delegation.delegated = community.address.toHexString()
       delegation.shares = event.params.shares
