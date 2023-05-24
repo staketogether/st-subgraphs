@@ -1,0 +1,5 @@
+type Community @entity {
+  id: ID!
+  account: Bytes!
+  active: Boolean!
+}

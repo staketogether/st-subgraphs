@@ -1,0 +1,8 @@
+{
+  "goerli": {
+    "StakeTogether": {
+      "address": "0x46025125C91a8c30aF09081e8B75D6f3b0962b66",
+      "startBlock": 9049771
+    }
+  }
+}
