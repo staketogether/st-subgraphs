@@ -5,11 +5,12 @@ import {
   CommunityRemoved,
   ConsensusLayerBalanceUpdated,
   Deposit,
+  SharesBurnt,
   TransferRewards,
+  TransferShares,
   Withdraw
 } from '../generated/StakeTogether/StakeTogether'
 import { Account, Community, Delegation, StakeTogether } from '../generated/schema'
-import { getPooledEthByShares } from './utils'
 
 export function handleBootstrap(event: Bootstrap): void {
   let st = new StakeTogether('st')
@@ -21,6 +22,8 @@ export function handleBootstrap(event: Bootstrap): void {
 
   st.totalShares = event.params.balance
   st.totalDelegatedShares = event.params.balance
+  st.totalPooledEther = BigInt.fromI32(0)
+  st.totalSupply = BigInt.fromI32(0)
 
   st.blockNumber = event.block.number
   st.blockTimestamp = event.block.timestamp
@@ -41,10 +44,7 @@ export function handleCommunityAdded(event: CommunityAdded): void {
   community.address = event.params.account
   community.active = true
   community.delegatedShares = BigInt.fromI32(0)
-  community.delegatedAmount = BigInt.fromI32(0)
   community.rewardsShares = BigInt.fromI32(0)
-  community.rewardsAmount = BigInt.fromI32(0)
-
   community.blockNumber = event.block.number
   community.blockTimestamp = event.block.timestamp
   community.transactionHash = event.transaction.hash
@@ -67,27 +67,11 @@ export function handleDeposit(event: Deposit): void {
   // Account -------------------------------------
   let accountId = event.params.account.toHexString()
   let account = Account.load(accountId)
-  if (account == null) {
-    account = new Account(accountId)
-    account.st = 'st'
-    account.address = event.params.account
-    account.shares = event.params.shares
-    account.amount = getPooledEthByShares(event.params.shares)
-    account.blockNumber = event.block.number
-    account.blockTimestamp = event.block.timestamp
-    account.transactionHash = event.transaction.hash
-    account.save()
-  } else {
-    account.shares = account.shares.plus(event.params.shares)
-    account.amount = getPooledEthByShares(account.shares)
-    account.save()
-  }
   // Community -----------------------------------
   let communityId = event.params.delegated.toHexString()
   let community = Community.load(communityId)
   if (community != null) {
     community.delegatedShares = event.params.shares
-    community.delegatedAmount = getPooledEthByShares(event.params.shares)
     community.save()
   }
   // Delegation ----------------------------------
@@ -100,7 +84,6 @@ export function handleDeposit(event: Deposit): void {
       delegation.delegator = account.address.toHexString()
       delegation.delegated = community.address.toHexString()
       delegation.shares = event.params.shares
-      delegation.amount = getPooledEthByShares(event.params.shares)
       delegation.blockNumber = event.block.number
       delegation.blockTimestamp = event.block.timestamp
       delegation.transactionHash = event.transaction.hash
@@ -110,31 +93,17 @@ export function handleDeposit(event: Deposit): void {
     delegation.shares = delegation.shares.plus(event.params.shares)
     delegation.save()
   }
-  // StakeTogether ----------------------------------
-  let st = StakeTogether.load('st')
-  if (st != null) {
-    st.ethBalance = st.ethBalance.plus(event.params.amount)
-    st.totalShares = st.totalShares.plus(event.params.shares)
-    st.totalDelegatedShares = st.totalDelegatedShares.plus(event.params.shares)
-    st.save()
-  }
 }
 
 export function handleWithdraw(event: Withdraw): void {
   // Account ------------------------------------
   let accountId = event.params.account.toHexString()
-  let account = Account.load(accountId)
-  if (account != null) {
-    account.shares = account.shares.minus(event.params.shares)
-    account.amount = getPooledEthByShares(account.shares)
-    account.save()
-  }
+
   // Community -----------------------------------
   let communityId = event.params.account.toHexString()
   let community = Community.load(communityId)
   if (community != null) {
     community.delegatedShares = community.delegatedShares.minus(event.params.shares)
-    community.delegatedAmount = getPooledEthByShares(community.delegatedShares)
     community.save()
   }
   // Delegation ----------------------------------
@@ -142,15 +111,12 @@ export function handleWithdraw(event: Withdraw): void {
   let delegation = Delegation.load(delegationId)
   if (delegation != null) {
     delegation.shares = delegation.shares.minus(event.params.shares)
-    delegation.amount = getPooledEthByShares(delegation.shares)
     delegation.save()
   }
   // StakeTogether ----------------------------------
   let st = StakeTogether.load('st')
   if (st != null) {
     st.ethBalance = st.ethBalance.minus(event.params.amount)
-    st.totalShares = st.totalShares.minus(event.params.shares)
-    st.totalDelegatedShares = st.totalDelegatedShares.minus(event.params.shares)
     st.save()
   }
 }
@@ -161,30 +127,13 @@ export function handleTransferRewards(event: TransferRewards): void {
   let community = Community.load(communityId)
   if (community != null) {
     community.delegatedShares = community.delegatedShares.plus(event.params.amount)
-    community.delegatedAmount = getPooledEthByShares(community.delegatedShares)
     community.rewardsShares = community.rewardsShares.plus(event.params.amount)
-    community.rewardsAmount = getPooledEthByShares(community.rewardsShares)
     community.save()
   }
 
   // Account -------------------------------------
   let accountId = event.params.to.toHexString()
   let account = Account.load(accountId)
-  if (account == null) {
-    account = new Account(accountId)
-    account.st = 'st'
-    account.address = event.params.to
-    account.shares = event.params.amount
-    account.amount = getPooledEthByShares(event.params.amount)
-    account.blockNumber = event.block.number
-    account.blockTimestamp = event.block.timestamp
-    account.transactionHash = event.transaction.hash
-    account.save()
-  } else {
-    account.shares = account.shares.plus(event.params.amount)
-    account.amount = getPooledEthByShares(account.shares)
-    account.save()
-  }
 
   // Delegation -------------------------------------
   let delegationId = `${accountId}-${communityId}`
@@ -196,7 +145,6 @@ export function handleTransferRewards(event: TransferRewards): void {
       delegation.delegator = account.address.toHexString()
       delegation.delegated = community.address.toHexString()
       delegation.shares = event.params.amount
-      delegation.amount = getPooledEthByShares(event.params.amount)
       delegation.blockNumber = event.block.number
       delegation.blockTimestamp = event.block.timestamp
       delegation.transactionHash = event.transaction.hash
@@ -204,7 +152,6 @@ export function handleTransferRewards(event: TransferRewards): void {
     }
   } else {
     delegation.shares = delegation.shares.plus(event.params.amount)
-    delegation.amount = getPooledEthByShares(delegation.shares)
     delegation.save()
   }
 
@@ -218,6 +165,63 @@ export function handleConsensusLayerBalanceUpdated(event: ConsensusLayerBalanceU
   let st = StakeTogether.load('st')
   if (st != null) {
     st.clBalance = event.params._balance
+    st.save()
+  }
+}
+
+export function handleTransferShares(event: TransferShares): void {
+  // Account -------------------------------------
+  let accountToId = event.params.to.toHexString()
+  let accountTo = Account.load(accountToId)
+  if (accountTo == null) {
+    accountTo = new Account(accountToId)
+    accountTo.st = 'st'
+    accountTo.address = event.params.to
+    accountTo.shares = event.params.sharesValue
+    accountTo.blockNumber = event.block.number
+    accountTo.blockTimestamp = event.block.timestamp
+    accountTo.transactionHash = event.transaction.hash
+    accountTo.save()
+  } else {
+    accountTo.shares = accountTo.shares.plus(event.params.sharesValue)
+    accountTo.save()
+  }
+
+  let accountFromId = event.params.from.toHexString()
+  let accountFrom = Account.load(accountFromId)
+  if (accountFrom == null) {
+    accountFrom = new Account(accountFromId)
+    accountFrom.st = 'st'
+    accountFrom.address = event.params.to
+    accountFrom.shares = BigInt.fromI32(0)
+    accountFrom.blockNumber = event.block.number
+    accountFrom.blockTimestamp = event.block.timestamp
+    accountFrom.transactionHash = event.transaction.hash
+    accountFrom.save()
+  } else {
+    accountFrom.shares = accountTo.shares.minus(event.params.sharesValue)
+    accountFrom.save()
+  }
+  // StakeTogether -------------------------------------
+  let st = StakeTogether.load('st')
+  if (st != null) {
+    st.totalShares = st.totalShares.plus(event.params.sharesValue)
+    st.save()
+  }
+}
+
+export function handleSharesBurnt(event: SharesBurnt): void {
+  // Account -------------------------------------
+  let accountId = event.params.account.toHexString()
+  let account = Account.load(accountId)
+  if (account != null) {
+    account.shares = account.shares.minus(event.params.sharesAmount)
+    account.save()
+  }
+  // StakeTogether -------------------------------------
+  let st = StakeTogether.load('st')
+  if (st != null) {
+    st.totalShares = st.totalShares.minus(event.params.sharesAmount)
     st.save()
   }
 }

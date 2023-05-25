@@ -29,6 +29,10 @@ dataSources:
           handler: handleConsensusLayerBalanceUpdated
         - event: Deposit(indexed address,uint256,uint256,address,address)
           handler: handleDeposit
+        - event: SharesBurnt(indexed address,uint256,uint256,uint256)
+          handler: handleSharesBurnt
+        - event: TransferShares(indexed address,indexed address,uint256)
+          handler: handleTransferShares
         - event: TransferRewards(indexed address,indexed address,uint256)
           handler: handleTransferRewards
         - event: Withdraw(indexed address,uint256,uint256,address)

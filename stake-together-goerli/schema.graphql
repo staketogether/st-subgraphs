@@ -13,6 +13,9 @@ type StakeTogether @entity {
   totalShares: BigInt!
   totalDelegatedShares: BigInt!
 
+  totalPooledEther: BigInt!
+  totalSupply: BigInt!
+
   stakeTogetherFeeRecipient: Bytes
   operatorFeeRecipient: Bytes
 
@@ -27,7 +30,7 @@ type Account @entity {
 
   address: Bytes!
   shares: BigInt!
-  amount: BigInt!
+
   delegates: [Delegation!]! @derivedFrom(field: "delegator")
 
   blockNumber: BigInt!
@@ -42,11 +45,10 @@ type Community @entity {
   address: Bytes!
   active: Boolean!
   delegatedShares: BigInt!
-  delegatedAmount: BigInt!
+
   delegates: [Delegation!]! @derivedFrom(field: "delegated")
 
   rewardsShares: BigInt!
-  rewardsAmount: BigInt!
 
   blockNumber: BigInt!
   blockTimestamp: BigInt!
@@ -61,7 +63,6 @@ type Delegation @entity {
   delegated: Community!
 
   shares: BigInt!
-  amount: BigInt!
 
   blockNumber: BigInt!
   blockTimestamp: BigInt!
