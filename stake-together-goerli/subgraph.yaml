@@ -6,9 +6,9 @@ dataSources:
     name: StakeTogether
     network: goerli
     source:
-      address: '0x5FA43a35AF0d89C695ba89aae742c38A35dE6592'
+      address: '0x65D99ccc150e006585Bb1904924034cBaFB091Aa'
       abi: StakeTogether
-      startBlock: 9055574
+      startBlock: 9063469
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -19,22 +19,26 @@ dataSources:
         - name: StakeTogether
           file: ./abis/StakeTogether.json
       eventHandlers:
-        - event: Bootstrap(uint256)
+        - event: AddCommunity(address)
+          handler: handleAddCommunity
+        - event: Bootstrap(address,uint256)
           handler: handleBootstrap
-        - event: CommunityAdded(address)
-          handler: handleCommunityAdded
-        - event: CommunityRemoved(address)
-          handler: handleCommunityRemoved
-        - event: ConsensusLayerBalanceUpdated(uint256)
-          handler: handleConsensusLayerBalanceUpdated
-        - event: Deposit(indexed address,uint256,uint256,address,address)
-          handler: handleDeposit
-        - event: SharesBurnt(indexed address,uint256,uint256,uint256)
-          handler: handleSharesBurnt
+        - event: BurnDelegatedShares(indexed address,indexed address,uint256)
+          handler: handleBurnDelegatedShares
+        - event: BurnShares(indexed address,uint256)
+          handler: handleBurnShares
+        - event: SetConsensusLayerBalance(uint256)
+          handler: handleSetConsensusLayerBalance
+        - event: DepositPool(indexed address,uint256,uint256,address,address)
+          handler: handleDepositPool
+        - event: RemoveCommunity(address)
+          handler: handleRemoveCommunity
         - event: TransferShares(indexed address,indexed address,uint256)
           handler: handleTransferShares
-        - event: TransferRewards(indexed address,indexed address,uint256)
-          handler: handleTransferRewards
-        - event: Withdraw(indexed address,uint256,uint256,address)
-          handler: handleWithdraw
+        - event: TransferDelegatedShares(indexed address,indexed address,indexed address,uint256)
+          handler: handleTransferDelegatedShares
+        - event: TransferRewardsShares(indexed address,indexed address,uint256)
+          handler: handleTransferRewardsShares
+        - event: WithdrawPool(indexed address,uint256,uint256,address)
+          handler: handleWithdrawPool
       file: ./src/stake-together.ts

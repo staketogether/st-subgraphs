@@ -2,7 +2,11 @@
   {
     "inputs": [
       { "internalType": "address", "name": "_stOracle", "type": "address" },
-      { "internalType": "address", "name": "_stValidator", "type": "address" }
+      {
+        "internalType": "address",
+        "name": "_depositContract",
+        "type": "address"
+      }
     ],
     "stateMutability": "payable",
     "type": "constructor"
@@ -12,6 +16,19 @@
     "inputs": [{ "internalType": "string", "name": "str", "type": "string" }],
     "name": "StringTooLong",
     "type": "error"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "AddCommunity",
+    "type": "event"
   },
   {
     "anonymous": false,
@@ -41,6 +58,12 @@
   {
     "anonymous": false,
     "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "sender",
+        "type": "address"
+      },
       {
         "indexed": false,
         "internalType": "uint256",
@@ -80,39 +103,81 @@
     "anonymous": false,
     "inputs": [
       {
-        "indexed": false,
+        "indexed": true,
         "internalType": "address",
         "name": "account",
         "type": "address"
-      }
-    ],
-    "name": "CommunityAdded",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "account",
-        "type": "address"
-      }
-    ],
-    "name": "CommunityRemoved",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
+      },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "_balance",
+        "name": "sharesAmount",
         "type": "uint256"
       }
     ],
-    "name": "ConsensusLayerBalanceUpdated",
+    "name": "BurnShares",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "creator",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "bytes",
+        "name": "publicKey",
+        "type": "bytes"
+      },
+      {
+        "indexed": false,
+        "internalType": "bytes",
+        "name": "withdrawalCredentials",
+        "type": "bytes"
+      },
+      {
+        "indexed": false,
+        "internalType": "bytes",
+        "name": "signature",
+        "type": "bytes"
+      },
+      {
+        "indexed": false,
+        "internalType": "bytes32",
+        "name": "depositDataRoot",
+        "type": "bytes32"
+      }
+    ],
+    "name": "CreateValidator",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "DepositBuffer",
     "type": "event"
   },
   {
@@ -149,26 +214,7 @@
         "type": "address"
       }
     ],
-    "name": "Deposit",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "account",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      }
-    ],
-    "name": "DepositBuffer",
+    "name": "DepositPool",
     "type": "event"
   },
   {
@@ -194,6 +240,19 @@
       }
     ],
     "name": "EtherReceived",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "fee",
+        "type": "uint256"
+      }
+    ],
+    "name": "OperatorFeeSet",
     "type": "event"
   },
   {
@@ -299,31 +358,104 @@
     "anonymous": false,
     "inputs": [
       {
-        "indexed": true,
+        "indexed": false,
         "internalType": "address",
         "name": "account",
         "type": "address"
-      },
+      }
+    ],
+    "name": "RemoveCommunity",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "preRebaseTokenAmount",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "postRebaseTokenAmount",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "sharesAmount",
+        "name": "fee",
         "type": "uint256"
       }
     ],
-    "name": "SharesBurnt",
+    "name": "SetCommunityFee",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "SetConsensusLayerBalance",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "SetMinDepositPoolAmount",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "to",
+        "type": "address"
+      }
+    ],
+    "name": "SetOperatorFeeRecipient",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "fee",
+        "type": "uint256"
+      }
+    ],
+    "name": "SetStakeTogetherFee",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "to",
+        "type": "address"
+      }
+    ],
+    "name": "SetStakeTogetherFeeRecipient",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "bytes",
+        "name": "withdrawalCredentials",
+        "type": "bytes"
+      }
+    ],
+    "name": "SetWithdrawalCredentials",
     "type": "event"
   },
   {
@@ -375,7 +507,7 @@
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "sharesValue",
+        "name": "sharesAmount",
         "type": "uint256"
       }
     ],
@@ -388,23 +520,29 @@
       {
         "indexed": true,
         "internalType": "address",
-        "name": "from",
+        "name": "account",
         "type": "address"
       },
       {
         "indexed": true,
         "internalType": "address",
-        "name": "to",
+        "name": "fromDelegate",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "toDelegate",
         "type": "address"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "amount",
+        "name": "sharesAmount",
         "type": "uint256"
       }
     ],
-    "name": "TransferRewards",
+    "name": "TransferPoolDelegatedShares",
     "type": "event"
   },
   {
@@ -425,7 +563,32 @@
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "sharesValue",
+        "name": "sharesAmount",
+        "type": "uint256"
+      }
+    ],
+    "name": "TransferRewardsShares",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "from",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "to",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "sharesAmount",
         "type": "uint256"
       }
     ],
@@ -451,41 +614,17 @@
       {
         "indexed": true,
         "internalType": "address",
-        "name": "creator",
+        "name": "account",
         "type": "address"
       },
       {
-        "indexed": true,
+        "indexed": false,
         "internalType": "uint256",
         "name": "amount",
         "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "bytes",
-        "name": "publicKey",
-        "type": "bytes"
-      },
-      {
-        "indexed": false,
-        "internalType": "bytes",
-        "name": "withdrawalCredentials",
-        "type": "bytes"
-      },
-      {
-        "indexed": false,
-        "internalType": "bytes",
-        "name": "signature",
-        "type": "bytes"
-      },
-      {
-        "indexed": false,
-        "internalType": "bytes32",
-        "name": "depositDataRoot",
-        "type": "bytes32"
       }
     ],
-    "name": "ValidatorCreated",
+    "name": "WithdrawBuffer",
     "type": "event"
   },
   {
@@ -516,26 +655,7 @@
         "type": "address"
       }
     ],
-    "name": "Withdraw",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "account",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      }
-    ],
-    "name": "WithdrawBuffer",
+    "name": "WithdrawPool",
     "type": "event"
   },
   { "stateMutability": "payable", "type": "fallback" },
@@ -673,6 +793,19 @@
   },
   {
     "inputs": [],
+    "name": "depositContract",
+    "outputs": [
+      {
+        "internalType": "contract IDepositContract",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "eip712Domain",
     "outputs": [
       { "internalType": "bytes1", "name": "fields", "type": "bytes1" },
@@ -759,6 +892,13 @@
   {
     "inputs": [{ "internalType": "address", "name": "account", "type": "address" }],
     "name": "isCommunity",
+    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [{ "internalType": "bytes", "name": "publicKey", "type": "bytes" }],
+    "name": "isValidator",
     "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
     "stateMutability": "view",
     "type": "function"
@@ -878,7 +1018,7 @@
   },
   {
     "inputs": [{ "internalType": "uint256", "name": "_amount", "type": "uint256" }],
-    "name": "setMinimumStakeAmount",
+    "name": "setMinDepositPoolAmount",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -912,6 +1052,19 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "bytes",
+        "name": "_withdrawalCredentials",
+        "type": "bytes"
+      }
+    ],
+    "name": "setWithdrawalCredentials",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [{ "internalType": "address", "name": "_account", "type": "address" }],
     "name": "sharesOf",
     "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
@@ -922,13 +1075,6 @@
     "inputs": [],
     "name": "stOracle",
     "outputs": [{ "internalType": "contract STOracle", "name": "", "type": "address" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "stValidator",
-    "outputs": [{ "internalType": "contract STValidator", "name": "", "type": "address" }],
     "stateMutability": "view",
     "type": "function"
   },
@@ -1004,6 +1150,21 @@
   },
   {
     "inputs": [
+      {
+        "internalType": "address",
+        "name": "_fromDelegated",
+        "type": "address"
+      },
+      { "internalType": "address", "name": "_toDelegated", "type": "address" },
+      { "internalType": "uint256", "name": "_sharesAmount", "type": "uint256" }
+    ],
+    "name": "transferPoolDelegatedShares",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
       { "internalType": "address", "name": "_to", "type": "address" },
       { "internalType": "uint256", "name": "_sharesAmount", "type": "uint256" }
     ],
@@ -1031,6 +1192,13 @@
     "type": "function"
   },
   {
+    "inputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "name": "validators",
+    "outputs": [{ "internalType": "bytes", "name": "", "type": "bytes" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [
       { "internalType": "uint256", "name": "_amount", "type": "uint256" },
       { "internalType": "address", "name": "_delegated", "type": "address" }
@@ -1049,7 +1217,14 @@
   },
   {
     "inputs": [],
-    "name": "withdrawalsBuffer",
+    "name": "withdrawalCredentials",
+    "outputs": [{ "internalType": "bytes", "name": "", "type": "bytes" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "withdrawalsBalance",
     "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
