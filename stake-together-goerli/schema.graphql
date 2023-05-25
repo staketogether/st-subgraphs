@@ -33,7 +33,7 @@ type Account @entity {
   delegatedShares: BigInt!
   rewardsShares: BigInt!
 
-  delegations: [Delegation!]! @derivedFrom(field: "delegator")
+  delegations: [Delegation!]! @derivedFrom(field: "delegate")
 
   blockNumber: BigInt!
   blockTimestamp: BigInt!
@@ -59,7 +59,7 @@ type Delegation @entity {
   id: ID!
   st: StakeTogether!
 
-  delegator: Account!
+  delegate: Account!
   delegated: Community!
 
   delegationShares: BigInt!
