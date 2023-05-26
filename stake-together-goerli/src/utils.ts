@@ -1,7 +1,7 @@
 import { BigInt } from '@graphprotocol/graph-ts'
 import { StakeTogether } from '../generated/schema'
 
-function getTotalPooledEther(): BigInt {
+export function getTotalPooledEther(): BigInt {
   let st = StakeTogether.load('st')
 
   if (st !== null) {

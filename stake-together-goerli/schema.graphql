@@ -12,6 +12,7 @@ type StakeTogether @entity {
 
   totalShares: BigInt!
   totalDelegatedShares: BigInt!
+  totalRewardsShares: BigInt!
 
   totalPooledEther: BigInt!
   totalSupply: BigInt!
