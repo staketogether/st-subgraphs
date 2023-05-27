@@ -10,12 +10,16 @@ type StakeTogether @entity {
   trBalance: BigInt!
   withdrawalsBalance: BigInt!
 
+  totalPooledEther: BigInt!
+  totalSupply: BigInt!
+
   totalShares: BigInt!
   totalDelegatedShares: BigInt!
   totalRewardsShares: BigInt!
 
-  totalPooledEther: BigInt!
-  totalSupply: BigInt!
+  totalSharesEther: BigInt!
+  totalDelegatedSharesEther: BigInt!
+  totalRewardsSharesEther: BigInt!
 
   stakeTogetherFeeRecipient: Bytes
   operatorFeeRecipient: Bytes

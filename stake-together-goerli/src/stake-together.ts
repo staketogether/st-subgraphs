@@ -13,7 +13,7 @@ import {
   WithdrawPool
 } from '../generated/StakeTogether/StakeTogether'
 import { Account, Community, Delegation, StakeTogether } from '../generated/schema'
-import { getTotalPooledEther } from './utils'
+import { getPooledEthByShares, getTotalPooledEther } from './utils'
 
 export function handleBootstrap(event: Bootstrap): void {
   let st = new StakeTogether('st')
@@ -26,6 +26,10 @@ export function handleBootstrap(event: Bootstrap): void {
   st.totalShares = event.params.balance
   st.totalDelegatedShares = event.params.balance
   st.totalRewardsShares = BigInt.fromI32(0)
+
+  st.totalSharesEther = event.params.balance
+  st.totalDelegatedSharesEther = event.params.balance
+  st.totalRewardsSharesEther = BigInt.fromI32(0)
 
   st.totalPooledEther = event.params.balance
   st.totalSupply = event.params.balance
@@ -114,6 +118,9 @@ export function handleDepositPool(event: DepositPool): void {
     st.save()
     st.totalPooledEther = getTotalPooledEther()
     st.totalSupply = st.totalPooledEther
+    st.totalSharesEther = getPooledEthByShares(st.totalShares)
+    st.totalDelegatedSharesEther = getPooledEthByShares(st.totalDelegatedShares)
+    st.totalRewardsSharesEther = getPooledEthByShares(st.totalRewardsShares)
     st.save()
   }
 }
@@ -137,6 +144,9 @@ export function handleWithdrawPool(event: WithdrawPool): void {
     st.save()
     st.totalPooledEther = getTotalPooledEther()
     st.totalSupply = st.totalPooledEther
+    st.totalSharesEther = getPooledEthByShares(st.totalShares)
+    st.totalDelegatedSharesEther = getPooledEthByShares(st.totalDelegatedShares)
+    st.totalRewardsSharesEther = getPooledEthByShares(st.totalRewardsShares)
     st.save()
   }
 }
@@ -172,6 +182,9 @@ export function handleTransferRewardsShares(event: TransferRewardsShares): void 
   let st = StakeTogether.load('st')
   if (st != null) {
     st.totalRewardsShares = st.totalRewardsShares.plus(event.params.sharesAmount)
+    st.totalSharesEther = getPooledEthByShares(st.totalShares)
+    st.totalDelegatedSharesEther = getPooledEthByShares(st.totalDelegatedShares)
+    st.totalRewardsSharesEther = getPooledEthByShares(st.totalRewardsShares)
     st.save()
   }
 }
@@ -184,6 +197,9 @@ export function handleSetConsensusLayerBalance(event: SetConsensusLayerBalance):
     st.save()
     st.totalPooledEther = getTotalPooledEther()
     st.totalSupply = st.totalPooledEther
+    st.totalSharesEther = getPooledEthByShares(st.totalShares)
+    st.totalDelegatedSharesEther = getPooledEthByShares(st.totalDelegatedShares)
+    st.totalRewardsSharesEther = getPooledEthByShares(st.totalRewardsShares)
     st.save()
   }
 }
@@ -233,6 +249,9 @@ export function handleTransferShares(event: TransferShares): void {
   let st = StakeTogether.load('st')
   if (st !== null) {
     st.totalShares = st.totalShares.plus(event.params.sharesAmount)
+    st.totalSharesEther = getPooledEthByShares(st.totalShares)
+    st.totalDelegatedSharesEther = getPooledEthByShares(st.totalDelegatedShares)
+    st.totalRewardsSharesEther = getPooledEthByShares(st.totalRewardsShares)
     st.save()
   }
 }
@@ -249,6 +268,9 @@ export function handleBurnShares(event: BurnShares): void {
   let st = StakeTogether.load('st')
   if (st != null) {
     st.totalShares = st.totalShares.minus(event.params.sharesAmount)
+    st.totalSharesEther = getPooledEthByShares(st.totalShares)
+    st.totalDelegatedSharesEther = getPooledEthByShares(st.totalDelegatedShares)
+    st.totalRewardsSharesEther = getPooledEthByShares(st.totalRewardsShares)
     st.save()
   }
 }
@@ -296,6 +318,9 @@ export function handleTransferDelegatedShares(event: TransferDelegatedShares): v
   let st = StakeTogether.load('st')
   if (st !== null) {
     st.totalDelegatedShares = st.totalDelegatedShares.plus(event.params.sharesAmount)
+    st.totalSharesEther = getPooledEthByShares(st.totalShares)
+    st.totalDelegatedSharesEther = getPooledEthByShares(st.totalDelegatedShares)
+    st.totalRewardsSharesEther = getPooledEthByShares(st.totalRewardsShares)
     st.save()
   }
   // Delegation -------------------------------------
@@ -331,6 +356,9 @@ export function handleBurnDelegatedShares(event: BurnDelegatedShares): void {
   let st = StakeTogether.load('st')
   if (st !== null) {
     st.totalDelegatedShares = st.totalDelegatedShares.minus(event.params.sharesAmount)
+    st.totalSharesEther = getPooledEthByShares(st.totalShares)
+    st.totalDelegatedSharesEther = getPooledEthByShares(st.totalDelegatedShares)
+    st.totalRewardsSharesEther = getPooledEthByShares(st.totalRewardsShares)
     st.save()
   }
   // Delegation -------------------------------------
