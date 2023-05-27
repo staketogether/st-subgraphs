@@ -34,9 +34,14 @@ type Account @entity {
   st: StakeTogether!
 
   address: Bytes!
+
   shares: BigInt!
   delegatedShares: BigInt!
   rewardsShares: BigInt!
+
+  sharesEther: BigInt!
+  delegatedSharesEther: BigInt!
+  rewardsSharesEther: BigInt!
 
   delegations: [Delegation!]! @derivedFrom(field: "delegate")
 

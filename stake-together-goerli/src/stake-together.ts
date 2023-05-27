@@ -49,9 +49,15 @@ export function handleAddCommunity(event: AddCommunity): void {
     account = new Account(accountId)
     account.st = 'st'
     account.address = event.params.account
+
     account.shares = BigInt.fromI32(0)
     account.delegatedShares = BigInt.fromI32(0)
     account.rewardsShares = BigInt.fromI32(0)
+
+    account.sharesEther = BigInt.fromI32(0)
+    account.delegatedSharesEther = BigInt.fromI32(0)
+    account.rewardsSharesEther = BigInt.fromI32(0)
+
     account.blockNumber = event.block.number
     account.blockTimestamp = event.block.timestamp
     account.transactionHash = event.transaction.hash
@@ -157,6 +163,7 @@ export function handleTransferRewardsShares(event: TransferRewardsShares): void 
   let account = Account.load(accountId)
   if (account !== null) {
     account.rewardsShares = account.rewardsShares.plus(event.params.sharesAmount)
+    account.rewardsSharesEther = getPooledEthByShares(account.rewardsShares)
     account.save()
   }
   // Delegation -------------------------------------
@@ -215,6 +222,9 @@ export function handleTransferShares(event: TransferShares): void {
     accountFrom.shares = BigInt.fromI32(0)
     accountFrom.delegatedShares = BigInt.fromI32(0)
     accountFrom.rewardsShares = BigInt.fromI32(0)
+    accountFrom.sharesEther = BigInt.fromI32(0)
+    accountFrom.delegatedSharesEther = BigInt.fromI32(0)
+    accountFrom.rewardsSharesEther = BigInt.fromI32(0)
     accountFrom.blockNumber = event.block.number
     accountFrom.blockTimestamp = event.block.timestamp
     accountFrom.transactionHash = event.transaction.hash
@@ -236,12 +246,16 @@ export function handleTransferShares(event: TransferShares): void {
     accountTo.shares = event.params.sharesAmount
     accountTo.delegatedShares = BigInt.fromI32(0)
     accountTo.rewardsShares = BigInt.fromI32(0)
+    accountTo.sharesEther = getPooledEthByShares(accountTo.shares)
+    accountTo.delegatedSharesEther = BigInt.fromI32(0)
+    accountTo.rewardsSharesEther = BigInt.fromI32(0)
     accountTo.blockNumber = event.block.number
     accountTo.blockTimestamp = event.block.timestamp
     accountTo.transactionHash = event.transaction.hash
     accountTo.save()
   } else {
     accountTo.shares = accountTo.shares.plus(event.params.sharesAmount)
+    accountTo.sharesEther = getPooledEthByShares(accountTo.shares)
     accountTo.save()
   }
 
@@ -262,6 +276,7 @@ export function handleBurnShares(event: BurnShares): void {
   let account = Account.load(accountId)
   if (account !== null) {
     account.shares = account.shares.minus(event.params.sharesAmount)
+    account.sharesEther = getPooledEthByShares(account.shares)
     account.save()
   }
   // StakeTogether -------------------------------------
@@ -286,6 +301,9 @@ export function handleTransferDelegatedShares(event: TransferDelegatedShares): v
     accountFrom.shares = BigInt.fromI32(0)
     accountFrom.delegatedShares = BigInt.fromI32(0)
     accountFrom.rewardsShares = BigInt.fromI32(0)
+    accountFrom.sharesEther = BigInt.fromI32(0)
+    accountFrom.delegatedSharesEther = BigInt.fromI32(0)
+    accountFrom.rewardsSharesEther = BigInt.fromI32(0)
     accountFrom.blockNumber = event.block.number
     accountFrom.blockTimestamp = event.block.timestamp
     accountFrom.transactionHash = event.transaction.hash
@@ -293,6 +311,7 @@ export function handleTransferDelegatedShares(event: TransferDelegatedShares): v
   } else {
     if (accountFrom.delegatedShares > BigInt.fromI32(0)) {
       accountFrom.delegatedShares = accountFrom.delegatedShares.minus(event.params.sharesAmount)
+      accountFrom.delegatedSharesEther = getPooledEthByShares(accountFrom.delegatedShares)
       accountFrom.save()
     }
   }
@@ -305,13 +324,17 @@ export function handleTransferDelegatedShares(event: TransferDelegatedShares): v
     accountTo.address = event.params.to
     accountTo.shares = BigInt.fromI32(0)
     accountTo.delegatedShares = event.params.sharesAmount
-    accountFrom.rewardsShares = BigInt.fromI32(0)
+    accountTo.rewardsShares = BigInt.fromI32(0)
+    accountTo.sharesEther = BigInt.fromI32(0)
+    accountTo.delegatedSharesEther = getPooledEthByShares(accountTo.delegatedShares)
+    accountTo.rewardsSharesEther = BigInt.fromI32(0)
     accountTo.blockNumber = event.block.number
     accountTo.blockTimestamp = event.block.timestamp
     accountTo.transactionHash = event.transaction.hash
     accountTo.save()
   } else {
     accountTo.delegatedShares = accountTo.delegatedShares.plus(event.params.sharesAmount)
+    accountTo.delegatedSharesEther = getPooledEthByShares(accountTo.delegatedShares)
     accountTo.save()
   }
   // StakeTogether -------------------------------------
@@ -350,6 +373,7 @@ export function handleBurnDelegatedShares(event: BurnDelegatedShares): void {
   let accountFrom = Account.load(accountFromId)
   if (accountFrom !== null) {
     accountFrom.delegatedShares = accountFrom.delegatedShares.minus(event.params.sharesAmount)
+    accountFrom.delegatedSharesEther = getPooledEthByShares(accountFrom.delegatedShares)
     accountFrom.save()
   }
   // StakeTogether -------------------------------------
