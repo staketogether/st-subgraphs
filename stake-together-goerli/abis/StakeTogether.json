@@ -177,7 +177,26 @@
         "type": "uint256"
       }
     ],
-    "name": "DepositBuffer",
+    "name": "DepositExtendedBuffer",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "DepositLiquidityBuffer",
     "type": "event"
   },
   {
@@ -198,7 +217,7 @@
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "shares",
+        "name": "sharesAmount",
         "type": "uint256"
       },
       {
@@ -373,11 +392,11 @@
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "fee",
+        "name": "amount",
         "type": "uint256"
       }
     ],
-    "name": "SetCommunityFee",
+    "name": "SetBeaconBalance",
     "type": "event"
   },
   {
@@ -386,11 +405,11 @@
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "amount",
+        "name": "fee",
         "type": "uint256"
       }
     ],
-    "name": "SetConsensusLayerBalance",
+    "name": "SetCommunityFee",
     "type": "event"
   },
   {
@@ -450,6 +469,19 @@
     "inputs": [
       {
         "indexed": false,
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "SetTransientBalance",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
         "internalType": "bytes",
         "name": "withdrawalCredentials",
         "type": "bytes"
@@ -501,7 +533,7 @@
       {
         "indexed": true,
         "internalType": "address",
-        "name": "delegate",
+        "name": "delegated",
         "type": "address"
       },
       {
@@ -526,13 +558,13 @@
       {
         "indexed": true,
         "internalType": "address",
-        "name": "fromDelegate",
+        "name": "fromDelegated",
         "type": "address"
       },
       {
         "indexed": true,
         "internalType": "address",
-        "name": "toDelegate",
+        "name": "toDelegated",
         "type": "address"
       },
       {
@@ -624,7 +656,26 @@
         "type": "uint256"
       }
     ],
-    "name": "WithdrawBuffer",
+    "name": "WithdrawExtendedBuffer",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "WithdrawLiquidityBuffer",
     "type": "event"
   },
   {
@@ -645,7 +696,7 @@
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "shares",
+        "name": "sharesAmount",
         "type": "uint256"
       },
       {
@@ -709,7 +760,14 @@
   },
   {
     "inputs": [],
-    "name": "clBalance",
+    "name": "beaconBalance",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "bufferedBalance",
     "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
@@ -717,6 +775,13 @@
   {
     "inputs": [],
     "name": "communityFee",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "contractBalance",
     "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
@@ -775,23 +840,6 @@
     "type": "function"
   },
   {
-    "inputs": [
-      { "internalType": "address", "name": "_delegated", "type": "address" },
-      { "internalType": "address", "name": "_referral", "type": "address" }
-    ],
-    "name": "deposit",
-    "outputs": [],
-    "stateMutability": "payable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "depositBuffer",
-    "outputs": [],
-    "stateMutability": "payable",
-    "type": "function"
-  },
-  {
     "inputs": [],
     "name": "depositContract",
     "outputs": [
@@ -802,6 +850,30 @@
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "depositExtendedBuffer",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "depositLiquidityBuffer",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "_delegated", "type": "address" },
+      { "internalType": "address", "name": "_referral", "type": "address" }
+    ],
+    "name": "depositPool",
+    "outputs": [],
+    "stateMutability": "payable",
     "type": "function"
   },
   {
@@ -825,7 +897,14 @@
   },
   {
     "inputs": [],
-    "name": "getBalance",
+    "name": "extendedBalance",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "extendedBufferedBalance",
     "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
@@ -838,20 +917,6 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "getPoolBalance",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [{ "internalType": "uint256", "name": "_sharesAmount", "type": "uint256" }],
-    "name": "getPooledEthByShares",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
     "inputs": [{ "internalType": "uint256", "name": "_ethAmount", "type": "uint256" }],
     "name": "getSharesByPooledEth",
     "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
@@ -860,22 +925,8 @@
   },
   {
     "inputs": [],
-    "name": "getTotalEtherSupply",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "getTotalPooledEther",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "getWithdrawalsBalance",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "name": "getValidators",
+    "outputs": [{ "internalType": "bytes[]", "name": "", "type": "bytes[]" }],
     "stateMutability": "view",
     "type": "function"
   },
@@ -905,6 +956,13 @@
   },
   {
     "inputs": [],
+    "name": "liquidityBalance",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "maxDelegations",
     "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
@@ -912,7 +970,7 @@
   },
   {
     "inputs": [],
-    "name": "minAmount",
+    "name": "minDepositAmount",
     "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
@@ -989,6 +1047,13 @@
     "type": "function"
   },
   {
+    "inputs": [{ "internalType": "uint256", "name": "_sharesAmount", "type": "uint256" }],
+    "name": "pooledEthByShares",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [{ "internalType": "address", "name": "account", "type": "address" }],
     "name": "removeCommunity",
     "outputs": [],
@@ -1003,8 +1068,8 @@
     "type": "function"
   },
   {
-    "inputs": [{ "internalType": "uint256", "name": "_balance", "type": "uint256" }],
-    "name": "setClBalance",
+    "inputs": [{ "internalType": "uint256", "name": "_beaconBalance", "type": "uint256" }],
+    "name": "setBeaconBalance",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -1047,6 +1112,19 @@
   {
     "inputs": [{ "internalType": "address", "name": "_to", "type": "address" }],
     "name": "setStakeTogetherFeeRecipient",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "_transientBalance",
+        "type": "uint256"
+      }
+    ],
+    "name": "setTransientBalance",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -1102,6 +1180,20 @@
   {
     "inputs": [],
     "name": "totalDelegatedShares",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "totalEtherSupply",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "totalPooledEther",
     "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
@@ -1186,6 +1278,13 @@
   },
   {
     "inputs": [],
+    "name": "transientBalance",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "unpause",
     "outputs": [],
     "stateMutability": "nonpayable",
@@ -1199,18 +1298,25 @@
     "type": "function"
   },
   {
-    "inputs": [
-      { "internalType": "uint256", "name": "_amount", "type": "uint256" },
-      { "internalType": "address", "name": "_delegated", "type": "address" }
-    ],
-    "name": "withdraw",
+    "inputs": [{ "internalType": "uint256", "name": "_amount", "type": "uint256" }],
+    "name": "withdrawExtendedBuffer",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
   },
   {
     "inputs": [{ "internalType": "uint256", "name": "_amount", "type": "uint256" }],
-    "name": "withdrawBuffer",
+    "name": "withdrawLiquidityBuffer",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "uint256", "name": "_amount", "type": "uint256" },
+      { "internalType": "address", "name": "_delegated", "type": "address" }
+    ],
+    "name": "withdrawPool",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

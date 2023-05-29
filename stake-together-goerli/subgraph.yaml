@@ -6,9 +6,9 @@ dataSources:
     name: StakeTogether
     network: goerli
     source:
-      address: '0x65D99ccc150e006585Bb1904924034cBaFB091Aa'
+      address: '0x8629bBd7Ab3B86739922f03884B7315801A1058C'
       abi: StakeTogether
-      startBlock: 9063469
+      startBlock: 9087230
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -27,8 +27,10 @@ dataSources:
           handler: handleBurnDelegatedShares
         - event: BurnShares(indexed address,uint256)
           handler: handleBurnShares
-        - event: SetConsensusLayerBalance(uint256)
-          handler: handleSetConsensusLayerBalance
+        - event: SetBeaconBalance(uint256)
+          handler: handleSetBeaconBalance
+        - event: DepositLiquidityBuffer(indexed address,uint256)
+          handler: handleDepositLiquidityBuffer
         - event: DepositPool(indexed address,uint256,uint256,address,address)
           handler: handleDepositPool
         - event: RemoveCommunity(address)
@@ -39,6 +41,8 @@ dataSources:
           handler: handleTransferDelegatedShares
         - event: TransferRewardsShares(indexed address,indexed address,uint256)
           handler: handleTransferRewardsShares
+        - event: WithdrawLiquidityBuffer(indexed address,uint256)
+          handler: handleWithdrawLiquidityBuffer
         - event: WithdrawPool(indexed address,uint256,uint256,address)
           handler: handleWithdrawPool
       file: ./src/stake-together.ts

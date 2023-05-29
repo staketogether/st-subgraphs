@@ -17,16 +17,8 @@ type StakeTogether @entity {
   totalDelegatedShares: BigInt!
   totalRewardsShares: BigInt!
 
-  totalSharesEther: BigInt!
-  totalDelegatedSharesEther: BigInt!
-  totalRewardsSharesEther: BigInt!
-
   stakeTogetherFeeRecipient: Bytes
   operatorFeeRecipient: Bytes
-
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
 }
 
 type Account @entity {
@@ -36,33 +28,24 @@ type Account @entity {
   address: Bytes!
 
   shares: BigInt!
-  delegatedShares: BigInt!
   rewardsShares: BigInt!
 
-  sharesEther: BigInt!
-  delegatedSharesEther: BigInt!
-  rewardsSharesEther: BigInt!
-
+  delegationsCount: BigInt!
   delegations: [Delegation!]! @derivedFrom(field: "delegate")
-
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
 }
 
 type Community @entity {
   id: ID!
   st: StakeTogether!
-  account: Account!
 
   address: Bytes!
   active: Boolean!
 
-  delegates: [Delegation!]! @derivedFrom(field: "delegated")
+  delegatedShares: BigInt!
+  rewardsShares: BigInt!
 
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
+  delegationsCount: BigInt!
+  delegations: [Delegation!]! @derivedFrom(field: "delegated")
 }
 
 type Delegation @entity {
@@ -73,8 +56,4 @@ type Delegation @entity {
   delegated: Community!
 
   delegationShares: BigInt!
-
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
 }
