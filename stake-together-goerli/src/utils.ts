@@ -13,7 +13,7 @@ export function poolBalance(): BigInt {
   }
 }
 
-export function accountBalance(accountId: string): BigInt {
+export function balanceOf(accountId: string): BigInt {
   let account = Account.load(accountId)
 
   if (account === null) {

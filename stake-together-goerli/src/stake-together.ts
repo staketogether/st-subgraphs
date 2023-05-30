@@ -19,7 +19,7 @@ import {
 } from '../generated/StakeTogether/StakeTogether'
 import { Account, Community, Delegation, StakeTogether } from '../generated/schema'
 import {
-  accountBalance,
+  balanceOf,
   poolBalance,
   poolBufferBalance,
   totalPooledEther,
@@ -215,7 +215,7 @@ export function handleTransferShares(event: TransferShares): void {
     if (accountFrom.shares.gt(event.params.sharesAmount)) {
       accountFrom.shares = accountFrom.shares.minus(event.params.sharesAmount)
       accountFrom.save()
-      accountFrom.balance = accountBalance(accountFromId)
+      accountFrom.balance = balanceOf(accountFromId)
       accountFrom.save()
     }
   }
@@ -233,7 +233,7 @@ export function handleTransferShares(event: TransferShares): void {
   } else {
     accountTo.shares = accountTo.shares.plus(event.params.sharesAmount)
     accountTo.save()
-    accountTo.balance = accountBalance(accountToId)
+    accountTo.balance = balanceOf(accountToId)
     accountTo.save()
   }
   // StakeTogether -------------------------------------
@@ -251,7 +251,7 @@ export function handleBurnShares(event: BurnShares): void {
   if (account !== null) {
     account.shares = account.shares.minus(event.params.sharesAmount)
     account.save()
-    account.balance = accountBalance(accountId)
+    account.balance = balanceOf(accountId)
     account.save()
   }
   // StakeTogether -------------------------------------
