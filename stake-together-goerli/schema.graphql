@@ -51,8 +51,8 @@ type Community @entity {
   delegatedShares: BigInt!
   rewardsShares: BigInt!
 
-  delegatedBalance: BigInt!
-  rewardsBalance: BigInt!
+  # delegatedBalance: BigInt!
+  # rewardsBalance: BigInt!
 
   # delegationsCount: BigInt!
   delegations: [Delegation!]! @derivedFrom(field: "delegated")
