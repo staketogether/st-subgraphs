@@ -207,12 +207,15 @@ export function handleTransferShares(event: TransferShares): void {
       accountFrom.st = 'st'
       accountFrom.address = event.params.from
       accountFrom.shares = BigInt.fromI32(0)
+      accountFrom.balance = BigInt.fromI32(0)
       accountFrom.rewardsShares = BigInt.fromI32(0)
       accountFrom.save()
     }
   } else {
     if (accountFrom.shares.gt(event.params.sharesAmount)) {
       accountFrom.shares = accountFrom.shares.minus(event.params.sharesAmount)
+      accountFrom.save()
+      accountFrom.balance = accountBalance(accountFromId)
       accountFrom.save()
     }
   }
@@ -224,10 +227,13 @@ export function handleTransferShares(event: TransferShares): void {
     accountTo.st = 'st'
     accountTo.address = event.params.to
     accountTo.shares = event.params.sharesAmount
+    accountTo.balance = event.params.sharesAmount
     accountTo.rewardsShares = BigInt.fromI32(0)
     accountTo.save()
   } else {
     accountTo.shares = accountTo.shares.plus(event.params.sharesAmount)
+    accountTo.save()
+    accountTo.balance = accountBalance(accountToId)
     accountTo.save()
   }
   // StakeTogether -------------------------------------
