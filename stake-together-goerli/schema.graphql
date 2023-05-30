@@ -67,5 +67,5 @@ type Delegation @entity {
 
   delegationShares: BigInt!
 
-  # delegatedShares: BigInt!
+  # delegationBalance: BigInt!
 }
