@@ -19,6 +19,7 @@ import {
 } from '../generated/StakeTogether/StakeTogether'
 import { Account, Community, Delegation, StakeTogether } from '../generated/schema'
 import {
+  accountBalance,
   poolBalance,
   poolBufferBalance,
   totalPooledEther,
@@ -59,6 +60,7 @@ export function handleAddCommunity(event: AddCommunity): void {
     account.st = 'st'
     account.address = event.params.account
     account.shares = BigInt.fromI32(0)
+    account.balance = BigInt.fromI32(0)
     account.rewardsShares = BigInt.fromI32(0)
     account.save()
   }
@@ -162,6 +164,7 @@ export function handleDepositPool(event: DepositPool): void {
     account.st = 'st'
     account.address = event.params.account
     account.shares = BigInt.fromI32(0)
+    account.balance = BigInt.fromI32(0)
     account.rewardsShares = BigInt.fromI32(0)
     account.save()
   }
@@ -241,6 +244,8 @@ export function handleBurnShares(event: BurnShares): void {
   let account = Account.load(accountId)
   if (account !== null) {
     account.shares = account.shares.minus(event.params.sharesAmount)
+    account.save()
+    account.balance = accountBalance(accountId)
     account.save()
   }
   // StakeTogether -------------------------------------

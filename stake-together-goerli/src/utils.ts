@@ -1,5 +1,5 @@
 import { BigInt } from '@graphprotocol/graph-ts'
-import { StakeTogether } from '../generated/schema'
+import { Account, StakeTogether } from '../generated/schema'
 
 export const zeroAccount = '0x0000000000000000000000000000000000000000'
 
@@ -10,6 +10,16 @@ export function poolBalance(): BigInt {
     return BigInt.fromI32(0)
   } else {
     return st.contractBalance.minus(st.liquidityBufferBalance).minus(st.validatorBufferBalance)
+  }
+}
+
+export function accountBalance(accountId: string): BigInt {
+  let account = Account.load(accountId)
+
+  if (account === null) {
+    return BigInt.fromI32(0)
+  } else {
+    return account.shares
   }
 }
 
