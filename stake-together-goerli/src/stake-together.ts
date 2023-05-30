@@ -309,35 +309,22 @@ export function handleBurnDelegatedShares(event: BurnDelegatedShares): void {
 }
 
 export function handleTransferRewardsShares(event: TransferRewardsShares): void {
-  // // Account -------------------------------------
-  // let accountId = event.params.to.toHexString()
-  // let account = Account.load(accountId)
-  // if (account !== null) {
-  //   account.rewardsShares = account.rewardsShares.plus(event.params.sharesAmount)
-  //   account.save()
-  // }
-  // // Delegation -------------------------------------
-  // let delegationId = `${accountId}-${accountId}`
-  // let delegation = Delegation.load(delegationId)
-  // if (delegation == null) {
-  //   if (account != null) {
-  //     delegation = new Delegation(delegationId)
-  //     delegation.st = 'st'
-  //     delegation.delegate = accountId
-  //     delegation.delegated = accountId
-  //     delegation.delegationShares = event.params.sharesAmount
-  //     delegation.save()
-  //   }
-  // } else {
-  //   delegation.delegationShares = delegation.delegationShares.plus(event.params.sharesAmount)
-  //   delegation.save()
-  // }
-  // // StakeTogether ----------------------------------
-  // let st = StakeTogether.load('st')
-  // if (st != null) {
-  //   st.totalRewardsShares = st.totalRewardsShares.plus(event.params.sharesAmount)
-  //   st.save()
-  // }
+  // Community -----------------------------------
+  let communityId = event.params.to.toHexString()
+  let community = Community.load(communityId)
+  if (community !== null) {
+    community.rewardsShares = community.rewardsShares.plus(event.params.sharesAmount)
+    community.save()
+  }
+  // StakeTogether -------------------------------------
+  let st = StakeTogether.load('st')
+  if (st !== null) {
+    st.totalRewardsShares = st.totalRewardsShares.plus(event.params.sharesAmount)
+    st.save()
+  }
+
+  // Todo: Implement Stake Together Rewards
+  // Todo: Implement Operator Rewards
 }
 
 export function handleSetTransientBalance(event: SetTransientBalance): void {
