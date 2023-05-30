@@ -60,9 +60,8 @@ export function handleAddCommunity(event: AddCommunity): void {
     account.st = 'st'
     account.address = event.params.account
     account.shares = BigInt.fromI32(0)
+    account.balance = BigInt.fromI32(0)
     account.rewardsShares = BigInt.fromI32(0)
-    account.save()
-    account.balance = balanceOf(accountId)
     account.save()
   }
   // Community -----------------------------------
@@ -165,9 +164,8 @@ export function handleDepositPool(event: DepositPool): void {
     account.st = 'st'
     account.address = event.params.account
     account.shares = BigInt.fromI32(0)
+    account.balance = BigInt.fromI32(0)
     account.rewardsShares = BigInt.fromI32(0)
-    account.save()
-    account.balance = balanceOf(accountId)
     account.save()
   }
   // StakeTogether ----------------------------------
@@ -209,9 +207,8 @@ export function handleTransferShares(event: TransferShares): void {
       accountFrom.st = 'st'
       accountFrom.address = event.params.from
       accountFrom.shares = BigInt.fromI32(0)
+      accountFrom.balance = BigInt.fromI32(0)
       accountFrom.rewardsShares = BigInt.fromI32(0)
-      accountFrom.save()
-      accountFrom.balance = balanceOf(accountFromId)
       accountFrom.save()
     }
   } else {
