@@ -27,7 +27,7 @@ export function withdrawalsBalance(): BigInt {
   if (st === null) {
     return BigInt.fromI32(0)
   } else {
-    return bufferedBalance().minus(st.liquidityBalance)
+    return bufferedBalance().plus(st.liquidityBalance)
   }
 }
 
