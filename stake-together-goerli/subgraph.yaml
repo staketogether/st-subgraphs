@@ -6,9 +6,9 @@ dataSources:
     name: StakeTogether
     network: goerli
     source:
-      address: '0xC92704a41B7B3683926145B04FE6C7c434f745B4'
+      address: '0x1D61e1e9a2C3DF39cfe668318ca0701db0CEDc60'
       abi: StakeTogether
-      startBlock: 9091354
+      startBlock: 9092338
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -31,12 +31,12 @@ dataSources:
           handler: handleSetBeaconBalance
         - event: SetTransientBalance(uint256)
           handler: handleSetTransientBalance
-        - event: DepositExtendedBuffer(indexed address,uint256)
-          handler: handleDepositExtendedBuffer
         - event: DepositLiquidityBuffer(indexed address,uint256)
           handler: handleDepositLiquidityBuffer
         - event: DepositPool(indexed address,uint256,uint256,address,address)
           handler: handleDepositPool
+        - event: DepositValidatorBuffer(indexed address,uint256)
+          handler: handleDepositValidatorBuffer
         - event: RemoveCommunity(address)
           handler: handleRemoveCommunity
         - event: TransferShares(indexed address,indexed address,uint256)
@@ -45,10 +45,10 @@ dataSources:
           handler: handleTransferDelegatedShares
         - event: TransferRewardsShares(indexed address,indexed address,uint256)
           handler: handleTransferRewardsShares
-        - event: WithdrawExtendedBuffer(indexed address,uint256)
-          handler: handleWithdrawExtendedBuffer
         - event: WithdrawLiquidityBuffer(indexed address,uint256)
           handler: handleWithdrawLiquidityBuffer
         - event: WithdrawPool(indexed address,uint256,uint256,address)
           handler: handleWithdrawPool
+        - event: WithdrawValidatorBuffer(indexed address,uint256)
+          handler: handleWithdrawValidatorBuffer
       file: ./src/stake-together.ts

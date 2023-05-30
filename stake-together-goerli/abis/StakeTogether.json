@@ -177,25 +177,6 @@
         "type": "uint256"
       }
     ],
-    "name": "DepositExtendedBuffer",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "account",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      }
-    ],
     "name": "DepositLiquidityBuffer",
     "type": "event"
   },
@@ -234,6 +215,25 @@
       }
     ],
     "name": "DepositPool",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "DepositValidatorBuffer",
     "type": "event"
   },
   {
@@ -656,25 +656,6 @@
         "type": "uint256"
       }
     ],
-    "name": "WithdrawExtendedBuffer",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "account",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
-      }
-    ],
     "name": "WithdrawLiquidityBuffer",
     "type": "event"
   },
@@ -707,6 +688,25 @@
       }
     ],
     "name": "WithdrawPool",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "WithdrawValidatorBuffer",
     "type": "event"
   },
   { "stateMutability": "payable", "type": "fallback" },
@@ -761,13 +761,6 @@
   {
     "inputs": [],
     "name": "beaconBalance",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "bufferedBalance",
     "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
@@ -854,13 +847,6 @@
   },
   {
     "inputs": [],
-    "name": "depositExtendedBuffer",
-    "outputs": [],
-    "stateMutability": "payable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
     "name": "depositLiquidityBuffer",
     "outputs": [],
     "stateMutability": "payable",
@@ -872,6 +858,13 @@
       { "internalType": "address", "name": "_referral", "type": "address" }
     ],
     "name": "depositPool",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "depositValidatorBuffer",
     "outputs": [],
     "stateMutability": "payable",
     "type": "function"
@@ -892,20 +885,6 @@
       { "internalType": "bytes32", "name": "salt", "type": "bytes32" },
       { "internalType": "uint256[]", "name": "extensions", "type": "uint256[]" }
     ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "extendedBalance",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "extendedBufferedBalance",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
   },
@@ -956,7 +935,7 @@
   },
   {
     "inputs": [],
-    "name": "liquidityBalance",
+    "name": "liquidityBufferBalance",
     "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
@@ -1037,6 +1016,20 @@
     "name": "permit",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "poolBalance",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "poolBufferBalance",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -1298,10 +1291,10 @@
     "type": "function"
   },
   {
-    "inputs": [{ "internalType": "uint256", "name": "_amount", "type": "uint256" }],
-    "name": "withdrawExtendedBuffer",
-    "outputs": [],
-    "stateMutability": "nonpayable",
+    "inputs": [],
+    "name": "validatorBufferBalance",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
     "type": "function"
   },
   {
@@ -1317,6 +1310,13 @@
       { "internalType": "address", "name": "_delegated", "type": "address" }
     ],
     "name": "withdrawPool",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [{ "internalType": "uint256", "name": "_amount", "type": "uint256" }],
+    "name": "withdrawValidatorBuffer",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

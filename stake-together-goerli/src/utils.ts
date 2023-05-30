@@ -1,23 +1,23 @@
 import { BigInt } from '@graphprotocol/graph-ts'
 import { StakeTogether } from '../generated/schema'
 
-export function bufferedBalance(): BigInt {
+export function poolBalance(): BigInt {
   let st = StakeTogether.load('st')
 
   if (st === null) {
     return BigInt.fromI32(0)
   } else {
-    return st.contractBalance.minus(st.liquidityBalance)
+    return st.contractBalance.minus(st.liquidityBufferBalance).minus(st.validatorBufferBalance)
   }
 }
 
-export function extendedBufferedBalance(): BigInt {
+export function poolBufferBalance(): BigInt {
   let st = StakeTogether.load('st')
 
   if (st === null) {
     return BigInt.fromI32(0)
   } else {
-    return bufferedBalance().plus(st.extendedBalance)
+    return poolBalance().plus(st.validatorBufferBalance)
   }
 }
 
@@ -27,7 +27,7 @@ export function withdrawalsBalance(): BigInt {
   if (st === null) {
     return BigInt.fromI32(0)
   } else {
-    return bufferedBalance().plus(st.liquidityBalance)
+    return poolBalance().plus(st.liquidityBufferBalance)
   }
 }
 
@@ -40,7 +40,8 @@ export function totalPooledEther(): BigInt {
     return st.contractBalance
       .plus(st.transientBalance)
       .plus(st.beaconBalance)
-      .minus(st.withdrawalsBalance)
+      .minus(st.liquidityBufferBalance)
+      .minus(st.validatorBufferBalance)
   }
 }
 

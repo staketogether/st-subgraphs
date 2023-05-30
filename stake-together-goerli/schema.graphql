@@ -8,13 +8,12 @@ type StakeTogether @entity {
   contractBalance: BigInt!
   beaconBalance: BigInt!
   transientBalance: BigInt!
-  liquidityBalance: BigInt!
-  extendedBalance: BigInt!
+  liquidityBufferBalance: BigInt!
+  validatorBufferBalance: BigInt!
 
-  bufferedBalance: BigInt!
-  extendedBufferedBalance: BigInt!
+  poolBalance: BigInt!
+  poolBufferBalance: BigInt!
   withdrawalsBalance: BigInt!
-
   totalPooledEther: BigInt!
   totalSupply: BigInt!
 
