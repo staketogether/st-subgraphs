@@ -19,7 +19,7 @@ export function accountBalance(accountId: string): BigInt {
   if (account === null) {
     return BigInt.fromI32(0)
   } else {
-    return account.shares
+    return pooledEthByShares(account.shares)
   }
 }
 
