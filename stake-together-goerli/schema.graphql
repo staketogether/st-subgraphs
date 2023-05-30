@@ -5,9 +5,14 @@ type StakeTogether @entity {
   communities: [Community!]! @derivedFrom(field: "st")
   delegations: [Delegation!]! @derivedFrom(field: "st")
 
-  ethBalance: BigInt!
-  clBalance: BigInt!
-  trBalance: BigInt!
+  contractBalance: BigInt!
+  beaconBalance: BigInt!
+  transientBalance: BigInt!
+  liquidityBalance: BigInt!
+  extendedBalance: BigInt!
+
+  bufferedBalance: BigInt!
+  extendedBufferedBalance: BigInt!
   withdrawalsBalance: BigInt!
 
   totalPooledEther: BigInt!

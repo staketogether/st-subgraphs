@@ -29,6 +29,10 @@ dataSources:
           handler: handleBurnShares
         - event: SetBeaconBalance(uint256)
           handler: handleSetBeaconBalance
+        - event: SetTransientBalance(uint256)
+          handler: handleSetTransientBalance
+        - event: DepositExtendedBuffer(indexed address,uint256)
+          handler: handleDepositExtendedBuffer
         - event: DepositLiquidityBuffer(indexed address,uint256)
           handler: handleDepositLiquidityBuffer
         - event: DepositPool(indexed address,uint256,uint256,address,address)
@@ -41,6 +45,8 @@ dataSources:
           handler: handleTransferDelegatedShares
         - event: TransferRewardsShares(indexed address,indexed address,uint256)
           handler: handleTransferRewardsShares
+        - event: WithdrawExtendedBuffer(indexed address,uint256)
+          handler: handleWithdrawExtendedBuffer
         - event: WithdrawLiquidityBuffer(indexed address,uint256)
           handler: handleWithdrawLiquidityBuffer
         - event: WithdrawPool(indexed address,uint256,uint256,address)

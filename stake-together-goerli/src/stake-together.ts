@@ -4,33 +4,47 @@ import {
   Bootstrap,
   BurnDelegatedShares,
   BurnShares,
+  DepositExtendedBuffer,
   DepositLiquidityBuffer,
   DepositPool,
   RemoveCommunity,
   SetBeaconBalance,
+  SetTransientBalance,
   TransferDelegatedShares,
   TransferRewardsShares,
   TransferShares,
+  WithdrawExtendedBuffer,
   WithdrawLiquidityBuffer,
   WithdrawPool
 } from '../generated/StakeTogether/StakeTogether'
 import { Account, Community, StakeTogether } from '../generated/schema'
-import { getTotalPooledEther } from './utils'
+import {
+  bufferedBalance,
+  extendedBufferedBalance,
+  totalPooledEther,
+  totalSupply,
+  withdrawalsBalance
+} from './utils'
 
 export function handleBootstrap(event: Bootstrap): void {
   let st = new StakeTogether('st')
 
-  st.ethBalance = event.params.balance
-  st.clBalance = BigInt.fromI32(0)
-  st.trBalance = BigInt.fromI32(0)
+  st.contractBalance = event.params.balance
+  st.beaconBalance = BigInt.fromI32(0)
+  st.transientBalance = BigInt.fromI32(0)
+  st.liquidityBalance = BigInt.fromI32(0)
+  st.extendedBalance = BigInt.fromI32(0)
+
+  st.bufferedBalance = event.params.balance
+  st.extendedBufferedBalance = BigInt.fromI32(0)
   st.withdrawalsBalance = BigInt.fromI32(0)
+
+  st.totalPooledEther = event.params.balance
+  st.totalSupply = event.params.balance
 
   st.totalShares = event.params.balance
   st.totalDelegatedShares = event.params.balance
   st.totalRewardsShares = BigInt.fromI32(0)
-
-  st.totalPooledEther = event.params.balance
-  st.totalSupply = event.params.balance
 
   st.save()
 }
@@ -80,11 +94,14 @@ export function handleDepositLiquidityBuffer(event: DepositLiquidityBuffer): voi
   // StakeTogether ----------------------------------
   let st = StakeTogether.load('st')
   if (st !== null) {
-    st.ethBalance = st.ethBalance.plus(event.params.amount)
-    st.withdrawalsBalance = st.withdrawalsBalance.plus(event.params.amount)
+    st.contractBalance = st.contractBalance.plus(event.params.amount)
+    st.liquidityBalance = st.liquidityBalance.plus(event.params.amount)
     st.save()
-    st.totalPooledEther = getTotalPooledEther()
-    st.totalSupply = st.totalPooledEther
+    st.bufferedBalance = bufferedBalance()
+    st.extendedBufferedBalance = extendedBufferedBalance()
+    st.withdrawalsBalance = withdrawalsBalance()
+    st.totalPooledEther = totalPooledEther()
+    st.totalSupply = totalSupply()
     st.save()
   }
 }
@@ -93,11 +110,46 @@ export function handleWithdrawLiquidityBuffer(event: WithdrawLiquidityBuffer): v
   // StakeTogether ----------------------------------
   let st = StakeTogether.load('st')
   if (st !== null) {
-    st.ethBalance = st.ethBalance.plus(event.params.amount)
-    st.withdrawalsBalance = st.withdrawalsBalance.minus(event.params.amount)
+    st.contractBalance = st.contractBalance.minus(event.params.amount)
+    st.liquidityBalance = st.liquidityBalance.minus(event.params.amount)
     st.save()
-    st.totalPooledEther = getTotalPooledEther()
-    st.totalSupply = st.totalPooledEther
+    st.bufferedBalance = bufferedBalance()
+    st.extendedBufferedBalance = extendedBufferedBalance()
+    st.withdrawalsBalance = withdrawalsBalance()
+    st.totalPooledEther = totalPooledEther()
+    st.totalSupply = totalSupply()
+    st.save()
+  }
+}
+
+export function handleDepositExtendedBuffer(event: DepositExtendedBuffer): void {
+  // StakeTogether ----------------------------------
+  let st = StakeTogether.load('st')
+  if (st !== null) {
+    st.contractBalance = st.contractBalance.plus(event.params.amount)
+    st.extendedBalance = st.extendedBalance.plus(event.params.amount)
+    st.save()
+    st.bufferedBalance = bufferedBalance()
+    st.extendedBufferedBalance = extendedBufferedBalance()
+    st.withdrawalsBalance = withdrawalsBalance()
+    st.totalPooledEther = totalPooledEther()
+    st.totalSupply = totalSupply()
+    st.save()
+  }
+}
+
+export function handleWithdrawExtendedBuffer(event: WithdrawExtendedBuffer): void {
+  // StakeTogether ----------------------------------
+  let st = StakeTogether.load('st')
+  if (st !== null) {
+    st.contractBalance = st.contractBalance.minus(event.params.amount)
+    st.extendedBalance = st.extendedBalance.minus(event.params.amount)
+    st.save()
+    st.bufferedBalance = bufferedBalance()
+    st.extendedBufferedBalance = extendedBufferedBalance()
+    st.withdrawalsBalance = withdrawalsBalance()
+    st.totalPooledEther = totalPooledEther()
+    st.totalSupply = totalSupply()
     st.save()
   }
 }
@@ -118,10 +170,13 @@ export function handleDepositPool(event: DepositPool): void {
   // StakeTogether ----------------------------------
   let st = StakeTogether.load('st')
   if (st !== null) {
-    st.ethBalance = st.ethBalance.plus(event.params.amount)
+    st.contractBalance = st.contractBalance.plus(event.params.amount)
     st.save()
-    st.totalPooledEther = getTotalPooledEther()
-    st.totalSupply = st.totalPooledEther
+    st.bufferedBalance = bufferedBalance()
+    st.extendedBufferedBalance = extendedBufferedBalance()
+    st.withdrawalsBalance = withdrawalsBalance()
+    st.totalPooledEther = totalPooledEther()
+    st.totalSupply = totalSupply()
     st.save()
   }
 }
@@ -130,10 +185,13 @@ export function handleWithdrawPool(event: WithdrawPool): void {
   // StakeTogether ----------------------------------
   let st = StakeTogether.load('st')
   if (st !== null) {
-    st.ethBalance = st.ethBalance.minus(event.params.amount)
+    st.contractBalance = st.contractBalance.minus(event.params.amount)
     st.save()
-    st.totalPooledEther = getTotalPooledEther()
-    st.totalSupply = st.totalPooledEther
+    st.bufferedBalance = bufferedBalance()
+    st.extendedBufferedBalance = extendedBufferedBalance()
+    st.withdrawalsBalance = withdrawalsBalance()
+    st.totalPooledEther = totalPooledEther()
+    st.totalSupply = totalSupply()
     st.save()
   }
 }
@@ -321,14 +379,32 @@ export function handleTransferRewardsShares(event: TransferRewardsShares): void 
   // }
 }
 
+export function handleSetTransientBalance(event: SetTransientBalance): void {
+  // StakeTogether ----------------------------------
+  let st = StakeTogether.load('st')
+  if (st != null) {
+    st.transientBalance = event.params.amount
+    st.save()
+    st.bufferedBalance = bufferedBalance()
+    st.extendedBufferedBalance = extendedBufferedBalance()
+    st.withdrawalsBalance = withdrawalsBalance()
+    st.totalPooledEther = totalPooledEther()
+    st.totalSupply = totalSupply()
+    st.save()
+  }
+}
+
 export function handleSetBeaconBalance(event: SetBeaconBalance): void {
   // StakeTogether ----------------------------------
   let st = StakeTogether.load('st')
   if (st != null) {
-    st.clBalance = event.params.amount
+    st.beaconBalance = event.params.amount
     st.save()
-    st.totalPooledEther = getTotalPooledEther()
-    st.totalSupply = st.totalPooledEther
+    st.bufferedBalance = bufferedBalance()
+    st.extendedBufferedBalance = extendedBufferedBalance()
+    st.withdrawalsBalance = withdrawalsBalance()
+    st.totalPooledEther = totalPooledEther()
+    st.totalSupply = totalSupply()
     st.save()
   }
 }
