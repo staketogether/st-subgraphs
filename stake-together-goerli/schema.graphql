@@ -34,7 +34,7 @@ type Account @entity {
   shares: BigInt!
   rewardsShares: BigInt!
 
-  # balance: BigInt!
+  balance: BigInt!
   # rewardsBalance: BigInt!
 
   # delegationsCount: BigInt!

@@ -19,6 +19,7 @@ import {
 } from '../generated/StakeTogether/StakeTogether'
 import { Account, Community, Delegation, StakeTogether } from '../generated/schema'
 import {
+  balanceOf,
   poolBalance,
   poolBufferBalance,
   totalPooledEther,
@@ -59,6 +60,7 @@ export function handleAddCommunity(event: AddCommunity): void {
     account.st = 'st'
     account.address = event.params.account
     account.shares = BigInt.fromI32(0)
+    account.balance = BigInt.fromI32(0)
     account.rewardsShares = BigInt.fromI32(0)
     account.save()
   }
@@ -162,6 +164,7 @@ export function handleDepositPool(event: DepositPool): void {
     account.st = 'st'
     account.address = event.params.account
     account.shares = BigInt.fromI32(0)
+    account.balance = BigInt.fromI32(0)
     account.rewardsShares = BigInt.fromI32(0)
     account.save()
   }
@@ -204,12 +207,15 @@ export function handleTransferShares(event: TransferShares): void {
       accountFrom.st = 'st'
       accountFrom.address = event.params.from
       accountFrom.shares = BigInt.fromI32(0)
+      accountFrom.balance = BigInt.fromI32(0)
       accountFrom.rewardsShares = BigInt.fromI32(0)
       accountFrom.save()
     }
   } else {
     if (accountFrom.shares.gt(event.params.sharesAmount)) {
       accountFrom.shares = accountFrom.shares.minus(event.params.sharesAmount)
+      accountFrom.save()
+      accountFrom.balance = balanceOf(accountFromId)
       accountFrom.save()
     }
   }
@@ -223,8 +229,12 @@ export function handleTransferShares(event: TransferShares): void {
     accountTo.shares = event.params.sharesAmount
     accountTo.rewardsShares = BigInt.fromI32(0)
     accountTo.save()
+    accountTo.balance = balanceOf(accountToId)
+    accountTo.save()
   } else {
     accountTo.shares = accountTo.shares.plus(event.params.sharesAmount)
+    accountTo.save()
+    accountTo.balance = balanceOf(accountToId)
     accountTo.save()
   }
   // StakeTogether -------------------------------------
@@ -241,6 +251,8 @@ export function handleBurnShares(event: BurnShares): void {
   let account = Account.load(accountId)
   if (account !== null) {
     account.shares = account.shares.minus(event.params.sharesAmount)
+    account.save()
+    account.balance = balanceOf(accountId)
     account.save()
   }
   // StakeTogether -------------------------------------
