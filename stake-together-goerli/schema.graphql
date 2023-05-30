@@ -34,7 +34,7 @@ type Account @entity {
   shares: BigInt!
   rewardsShares: BigInt!
 
-  delegationsCount: BigInt!
+  # delegationsCount: BigInt!
   delegations: [Delegation!]! @derivedFrom(field: "delegate")
 }
 
@@ -48,7 +48,7 @@ type Community @entity {
   delegatedShares: BigInt!
   rewardsShares: BigInt!
 
-  delegationsCount: BigInt!
+  # delegationsCount: BigInt!
   delegations: [Delegation!]! @derivedFrom(field: "delegated")
 }
 

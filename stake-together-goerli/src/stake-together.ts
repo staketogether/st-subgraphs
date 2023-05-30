@@ -23,7 +23,8 @@ import {
   poolBufferBalance,
   totalPooledEther,
   totalSupply,
-  withdrawalsBalance
+  withdrawalsBalance,
+  zeroAccount
 } from './utils'
 
 export function handleBootstrap(event: Bootstrap): void {
@@ -59,7 +60,6 @@ export function handleAddCommunity(event: AddCommunity): void {
     account.address = event.params.account
     account.shares = BigInt.fromI32(0)
     account.rewardsShares = BigInt.fromI32(0)
-    account.delegationsCount = BigInt.fromI32(0)
     account.save()
   }
   // Community -----------------------------------
@@ -71,7 +71,6 @@ export function handleAddCommunity(event: AddCommunity): void {
     community.address = event.params.account
     community.delegatedShares = BigInt.fromI32(0)
     community.rewardsShares = BigInt.fromI32(0)
-    community.delegationsCount = BigInt.fromI32(0)
     community.active = true
     community.save()
   } else {
@@ -164,7 +163,6 @@ export function handleDepositPool(event: DepositPool): void {
     account.address = event.params.account
     account.shares = BigInt.fromI32(0)
     account.rewardsShares = BigInt.fromI32(0)
-    account.delegationsCount = BigInt.fromI32(0)
     account.save()
   }
   // StakeTogether ----------------------------------
@@ -197,58 +195,60 @@ export function handleWithdrawPool(event: WithdrawPool): void {
 }
 
 export function handleTransferShares(event: TransferShares): void {
-  // // Account From -------------------------------------
-  // let accountFromId = event.params.from.toHexString()
-  // let accountFrom = Account.load(accountFromId)
-  // if (accountFrom === null) {
-  //   accountFrom = new Account(accountFromId)
-  //   accountFrom.st = 'st'
-  //   accountFrom.address = event.params.from
-  //   accountFrom.shares = BigInt.fromI32(0)
-  //   accountFrom.rewardsShares = BigInt.fromI32(0)
-  //   accountFrom.delegationsCount = BigInt.fromI32(0)
-  //   accountFrom.save()
-  // } else {
-  //   accountFrom.shares = accountFrom.shares.minus(event.params.sharesAmount)
-  //   accountFrom.save()
-  // }
-  // // Account To -----------------------------------
-  // let accountToId = event.params.to.toHexString()
-  // let accountTo = Account.load(accountToId)
-  // if (accountTo === null) {
-  //   accountTo = new Account(accountToId)
-  //   accountTo.st = 'st'
-  //   accountTo.address = event.params.to
-  //   accountTo.shares = event.params.sharesAmount
-  //   accountTo.rewardsShares = BigInt.fromI32(0)
-  //   accountFrom.delegationsCount = BigInt.fromI32(0)
-  //   accountTo.save()
-  // } else {
-  //   accountTo.shares = accountTo.shares.plus(event.params.sharesAmount)
-  //   accountTo.save()
-  // }
-  // // StakeTogether -------------------------------------
-  // let st = StakeTogether.load('st')
-  // if (st !== null) {
-  //   st.totalShares = st.totalShares.plus(event.params.sharesAmount)
-  //   st.save()
-  // }
+  // Account From -------------------------------------
+  let accountFromId = event.params.from.toHexString()
+  let accountFrom = Account.load(accountFromId)
+  if (accountFrom === null) {
+    if (!accountFromId.includes(zeroAccount)) {
+      accountFrom = new Account(accountFromId)
+      accountFrom.st = 'st'
+      accountFrom.address = event.params.from
+      accountFrom.shares = BigInt.fromI32(0)
+      accountFrom.rewardsShares = BigInt.fromI32(0)
+      accountFrom.save()
+    }
+  } else {
+    if (accountFrom.shares.gt(event.params.sharesAmount)) {
+      accountFrom.shares = accountFrom.shares.minus(event.params.sharesAmount)
+      accountFrom.save()
+    }
+  }
+  // Account To -----------------------------------
+  let accountToId = event.params.to.toHexString()
+  let accountTo = Account.load(accountToId)
+  if (accountTo === null) {
+    accountTo = new Account(accountToId)
+    accountTo.st = 'st'
+    accountTo.address = event.params.to
+    accountTo.shares = event.params.sharesAmount
+    accountTo.rewardsShares = BigInt.fromI32(0)
+    accountTo.save()
+  } else {
+    accountTo.shares = accountTo.shares.plus(event.params.sharesAmount)
+    accountTo.save()
+  }
+  // StakeTogether -------------------------------------
+  let st = StakeTogether.load('st')
+  if (st !== null) {
+    st.totalShares = st.totalShares.plus(event.params.sharesAmount)
+    st.save()
+  }
 }
 
 export function handleBurnShares(event: BurnShares): void {
-  // // Account -------------------------------------
-  // let accountId = event.params.account.toHexString()
-  // let account = Account.load(accountId)
-  // if (account !== null) {
-  //   account.shares = account.shares.minus(event.params.sharesAmount)
-  //   account.save()
-  // }
-  // // StakeTogether -------------------------------------
-  // let st = StakeTogether.load('st')
-  // if (st !== null) {
-  //   st.totalShares = st.totalShares.minus(event.params.sharesAmount)
-  //   st.save()
-  // }
+  // Account -------------------------------------
+  let accountId = event.params.account.toHexString()
+  let account = Account.load(accountId)
+  if (account !== null) {
+    account.shares = account.shares.minus(event.params.sharesAmount)
+    account.save()
+  }
+  // StakeTogether -------------------------------------
+  let st = StakeTogether.load('st')
+  if (st !== null) {
+    st.totalShares = st.totalShares.minus(event.params.sharesAmount)
+    st.save()
+  }
 }
 
 export function handleTransferDelegatedShares(event: TransferDelegatedShares): void {

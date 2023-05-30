@@ -1,6 +1,8 @@
 import { BigInt } from '@graphprotocol/graph-ts'
 import { StakeTogether } from '../generated/schema'
 
+export const zeroAccount = '0x0000000000000000000000000000000000000000'
+
 export function poolBalance(): BigInt {
   let st = StakeTogether.load('st')
 
