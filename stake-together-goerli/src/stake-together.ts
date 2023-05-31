@@ -292,6 +292,8 @@ export function handleTransferDelegatedShares(event: TransferDelegatedShares): v
   let accountToId = event.params.to.toHexString()
   let delegationId = `${accountFromId}-${accountToId}`
   let delegation = Delegation.load(delegationId)
+  let accountTo = Account.load(accountToId)
+  let isNewDelegation = false
 
   if (delegation === null) {
     delegation = new Delegation(delegationId)
@@ -300,9 +302,26 @@ export function handleTransferDelegatedShares(event: TransferDelegatedShares): v
     delegation.delegated = accountToId
     delegation.delegationShares = event.params.sharesAmount
     delegation.save()
+    isNewDelegation = true
   } else {
     delegation.delegationShares = delegation.delegationShares.plus(event.params.sharesAmount)
     delegation.save()
+  }
+
+  if (accountTo === null) {
+    accountTo = new Account(accountToId)
+    accountTo.st = 'st'
+    accountTo.address = event.params.from
+    accountTo.shares = BigInt.fromI32(0)
+    accountTo.balance = BigInt.fromI32(0)
+    accountTo.sentDelegationsCount = BigInt.fromI32(0)
+    accountTo.rewardsShares = BigInt.fromI32(0)
+    accountTo.save()
+  } else {
+    if (isNewDelegation) {
+      accountTo.sentDelegationsCount = accountTo.sentDelegationsCount.plus(BigInt.fromI32(1))
+      accountTo.save()
+    }
   }
 }
 
@@ -312,8 +331,12 @@ export function handleBurnDelegatedShares(event: BurnDelegatedShares): void {
   let community = Community.load(communityId)
   if (community !== null) {
     community.delegatedShares = community.delegatedShares.minus(event.params.sharesAmount)
-    community.receivedDelegationsCount = community.receivedDelegationsCount.minus(BigInt.fromI32(1))
     community.save()
+
+    if (community.delegatedShares.le(BigInt.fromI32(0))) {
+      community.receivedDelegationsCount = BigInt.fromI32(0)
+    }
+
     community.delegatedBalance = pooledEthByShares(community.delegatedShares)
     community.save()
   }
@@ -328,10 +351,23 @@ export function handleBurnDelegatedShares(event: BurnDelegatedShares): void {
   let accountToId = event.params.delegate.toHexString()
   let delegationId = `${accountFromId}-${accountToId}`
   let delegation = Delegation.load(delegationId)
+  let accountFrom = Account.load(accountFromId)
 
   if (delegation !== null) {
     delegation.delegationShares = delegation.delegationShares.minus(event.params.sharesAmount)
     delegation.save()
+
+    // Remove delegation if shares are 0
+    if (delegation.delegationShares.le(BigInt.fromI32(0))) {
+      if (community !== null && community.receivedDelegationsCount.gt(BigInt.fromI32(0))) {
+        community.receivedDelegationsCount = community.receivedDelegationsCount.minus(BigInt.fromI32(1))
+        community.save()
+      }
+      if (accountFrom !== null && accountFrom.sentDelegationsCount.gt(BigInt.fromI32(0))) {
+        accountFrom.sentDelegationsCount = accountFrom.sentDelegationsCount.minus(BigInt.fromI32(1))
+        accountFrom.save()
+      }
+    }
   }
 }
 
