@@ -274,7 +274,17 @@ export function handleTransferDelegatedShares(event: TransferDelegatedShares): v
   // Community -----------------------------------
   let communityId = event.params.delegated.toHexString()
   let community = Community.load(communityId)
-  if (community !== null) {
+  if (community === null) {
+    community = new Community(communityId)
+    community.st = 'st'
+    community.address = event.params.delegated
+    community.receivedDelegationsCount = BigInt.fromI32(0)
+    community.delegatedShares = BigInt.fromI32(0)
+    community.delegatedBalance = BigInt.fromI32(0)
+    community.rewardsShares = BigInt.fromI32(0)
+    community.active = true
+    community.save()
+  } else {
     community.delegatedShares = community.delegatedShares.plus(event.params.sharesAmount)
     community.save()
     community.delegatedBalance = pooledEthByShares(community.delegatedShares)
