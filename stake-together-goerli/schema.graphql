@@ -37,7 +37,7 @@ type Account @entity {
   balance: BigInt!
   # rewardsBalance: BigInt!
 
-  # delegationsCount: BigInt!
+  sentDelegationsCount: BigInt!
   delegations: [Delegation!]! @derivedFrom(field: "delegate")
 }
 
@@ -51,10 +51,10 @@ type Community @entity {
   delegatedShares: BigInt!
   rewardsShares: BigInt!
 
-  # delegatedBalance: BigInt!
+  delegatedBalance: BigInt!
   # rewardsBalance: BigInt!
 
-  # delegationsCount: BigInt!
+  receivedDelegationsCount: BigInt!
   delegations: [Delegation!]! @derivedFrom(field: "delegated")
 }
 

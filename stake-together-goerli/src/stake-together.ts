@@ -21,7 +21,7 @@ import { Account, Community, Delegation, StakeTogether } from '../generated/sche
 import {
   balanceOf,
   poolBalance,
-  poolBufferBalance,
+  poolBufferBalance, pooledEthByShares,
   totalPooledEther,
   totalSupply,
   withdrawalsBalance,
@@ -61,6 +61,7 @@ export function handleAddCommunity(event: AddCommunity): void {
     account.address = event.params.account
     account.shares = BigInt.fromI32(0)
     account.balance = BigInt.fromI32(0)
+    account.sentDelegationsCount = BigInt.fromI32(0)
     account.rewardsShares = BigInt.fromI32(0)
     account.save()
   }
@@ -71,7 +72,9 @@ export function handleAddCommunity(event: AddCommunity): void {
     community = new Community(id)
     community.st = 'st'
     community.address = event.params.account
+    community.receivedDelegationsCount = BigInt.fromI32(0)
     community.delegatedShares = BigInt.fromI32(0)
+    community.delegatedBalance = BigInt.fromI32(0)
     community.rewardsShares = BigInt.fromI32(0)
     community.active = true
     community.save()
@@ -165,6 +168,7 @@ export function handleDepositPool(event: DepositPool): void {
     account.address = event.params.account
     account.shares = BigInt.fromI32(0)
     account.balance = BigInt.fromI32(0)
+    account.sentDelegationsCount = BigInt.fromI32(0)
     account.rewardsShares = BigInt.fromI32(0)
     account.save()
   }
@@ -208,6 +212,7 @@ export function handleTransferShares(event: TransferShares): void {
       accountFrom.address = event.params.from
       accountFrom.shares = BigInt.fromI32(0)
       accountFrom.balance = BigInt.fromI32(0)
+      accountFrom.sentDelegationsCount = BigInt.fromI32(0)
       accountFrom.rewardsShares = BigInt.fromI32(0)
       accountFrom.save()
     }
@@ -228,6 +233,7 @@ export function handleTransferShares(event: TransferShares): void {
     accountTo.address = event.params.to
     accountTo.shares = event.params.sharesAmount
     accountTo.rewardsShares = BigInt.fromI32(0)
+    accountTo.sentDelegationsCount = BigInt.fromI32(0)
     accountTo.balance = BigInt.fromI32(0)
     accountTo.save()
     accountTo.balance = balanceOf(accountToId)
@@ -270,6 +276,9 @@ export function handleTransferDelegatedShares(event: TransferDelegatedShares): v
   let community = Community.load(communityId)
   if (community !== null) {
     community.delegatedShares = community.delegatedShares.plus(event.params.sharesAmount)
+    community.receivedDelegationsCount = community.receivedDelegationsCount.plus(BigInt.fromI32(1))
+    community.save()
+    community.delegatedBalance = pooledEthByShares(community.delegatedShares)
     community.save()
   }
   // StakeTogether -------------------------------------
@@ -283,6 +292,7 @@ export function handleTransferDelegatedShares(event: TransferDelegatedShares): v
   let accountToId = event.params.to.toHexString()
   let delegationId = `${accountFromId}-${accountToId}`
   let delegation = Delegation.load(delegationId)
+
   if (delegation === null) {
     delegation = new Delegation(delegationId)
     delegation.st = 'st'
@@ -302,6 +312,9 @@ export function handleBurnDelegatedShares(event: BurnDelegatedShares): void {
   let community = Community.load(communityId)
   if (community !== null) {
     community.delegatedShares = community.delegatedShares.minus(event.params.sharesAmount)
+    community.receivedDelegationsCount = community.receivedDelegationsCount.minus(BigInt.fromI32(1))
+    community.save()
+    community.delegatedBalance = pooledEthByShares(community.delegatedShares)
     community.save()
   }
   // StakeTogether -------------------------------------
@@ -315,6 +328,7 @@ export function handleBurnDelegatedShares(event: BurnDelegatedShares): void {
   let accountToId = event.params.delegate.toHexString()
   let delegationId = `${accountFromId}-${accountToId}`
   let delegation = Delegation.load(delegationId)
+
   if (delegation !== null) {
     delegation.delegationShares = delegation.delegationShares.minus(event.params.sharesAmount)
     delegation.save()
