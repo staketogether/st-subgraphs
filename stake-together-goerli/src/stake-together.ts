@@ -314,7 +314,7 @@ export function handleTransferDelegatedShares(event: TransferDelegatedShares): v
     isNewDelegation = true
 
     // Count received delegations from users to the community
-    if (communityId.toLowerCase() !== accountToId.toLowerCase() && accountTo?.shares.gt(BigInt.fromI32(0))) {
+    if (communityId.toLowerCase() !== accountToId.toLowerCase() && accountTo !== null && accountTo.shares.gt(BigInt.fromI32(0))) {
       community.receivedDelegationsCount = community.receivedDelegationsCount.plus(BigInt.fromI32(1))
       community.save()
     }
