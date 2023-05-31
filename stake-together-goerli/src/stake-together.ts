@@ -228,6 +228,7 @@ export function handleTransferShares(event: TransferShares): void {
     accountTo.address = event.params.to
     accountTo.shares = event.params.sharesAmount
     accountTo.rewardsShares = BigInt.fromI32(0)
+    accountTo.balance = BigInt.fromI32(0)
     accountTo.save()
     accountTo.balance = balanceOf(accountToId)
     accountTo.save()
