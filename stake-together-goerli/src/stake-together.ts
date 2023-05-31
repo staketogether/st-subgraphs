@@ -295,20 +295,18 @@ export function handleTransferDelegatedShares(event: TransferDelegatedShares): v
   let isNewDelegation = false
 
   if (delegation === null) {
-    if (accountToId !== null && accountFromId !== null) {
-      delegation = new Delegation(delegationId)
-      delegation.st = 'st'
-      delegation.delegate = accountFromId
-      delegation.delegated = accountToId
-      delegation.delegationShares = event.params.sharesAmount
-      delegation.save()
-      isNewDelegation = true
+    delegation = new Delegation(delegationId)
+    delegation.st = 'st'
+    delegation.delegate = accountToId
+    delegation.delegated = communityId
+    delegation.delegationShares = event.params.sharesAmount
+    delegation.save()
+    isNewDelegation = true
 
-      // Count received delegations from users to the community
-      if (community !== null && communityId.toLowerCase() !== accountToId.toLowerCase()) {
-        community.receivedDelegationsCount = community.receivedDelegationsCount.plus(BigInt.fromI32(1))
-        community.save()
-      }
+    // Count received delegations from users to the community
+    if (community !== null && communityId.toLowerCase() !== accountToId.toLowerCase()) {
+      community.receivedDelegationsCount = community.receivedDelegationsCount.plus(BigInt.fromI32(1))
+      community.save()
     }
   } else {
     delegation.delegationShares = delegation.delegationShares.plus(event.params.sharesAmount)
