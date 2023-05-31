@@ -276,7 +276,6 @@ export function handleTransferDelegatedShares(event: TransferDelegatedShares): v
   let community = Community.load(communityId)
   if (community !== null) {
     community.delegatedShares = community.delegatedShares.plus(event.params.sharesAmount)
-    community.receivedDelegationsCount = community.receivedDelegationsCount.plus(BigInt.fromI32(1))
     community.save()
     community.delegatedBalance = pooledEthByShares(community.delegatedShares)
     community.save()
@@ -294,6 +293,12 @@ export function handleTransferDelegatedShares(event: TransferDelegatedShares): v
   let delegation = Delegation.load(delegationId)
   let accountTo = Account.load(accountToId)
   let isNewDelegation = false
+
+  // Count received delegations from users to the community
+  if (community !== null && communityId.toLowerCase() !== accountToId.toLowerCase()) {
+    community.receivedDelegationsCount = community.receivedDelegationsCount.plus(BigInt.fromI32(1))
+    community.save()
+  }
 
   if (delegation === null) {
     delegation = new Delegation(delegationId)
@@ -318,6 +323,7 @@ export function handleTransferDelegatedShares(event: TransferDelegatedShares): v
     accountTo.rewardsShares = BigInt.fromI32(0)
     accountTo.save()
   } else {
+    // Count sent delegations from users to communities
     if (isNewDelegation) {
       accountTo.sentDelegationsCount = accountTo.sentDelegationsCount.plus(BigInt.fromI32(1))
       accountTo.save()
