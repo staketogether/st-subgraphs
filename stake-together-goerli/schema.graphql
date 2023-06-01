@@ -29,7 +29,7 @@ type Account @entity {
   id: ID!
   st: StakeTogether!
 
-  address: Bytes!
+  address: String!
 
   shares: BigInt!
   rewardsShares: BigInt!
@@ -37,7 +37,7 @@ type Account @entity {
   balance: BigInt!
   # rewardsBalance: BigInt!
 
-  # delegationsCount: BigInt!
+  sentDelegationsCount: BigInt!
   delegations: [Delegation!]! @derivedFrom(field: "delegate")
 }
 
@@ -45,16 +45,16 @@ type Community @entity {
   id: ID!
   st: StakeTogether!
 
-  address: Bytes!
+  address: String!
   active: Boolean!
 
   delegatedShares: BigInt!
   rewardsShares: BigInt!
 
-  # delegatedBalance: BigInt!
+  delegatedBalance: BigInt!
   # rewardsBalance: BigInt!
 
-  # delegationsCount: BigInt!
+  receivedDelegationsCount: BigInt!
   delegations: [Delegation!]! @derivedFrom(field: "delegated")
 }
 
