@@ -1,0 +1,118 @@
+import { BigInt } from '@graphprotocol/graph-ts'
+import { Account, Community, Delegation, StakeTogether } from '../generated/schema'
+import {
+  balanceOf,
+  poolBalance,
+  poolBufferBalance,
+  pooledEthByShares,
+  totalPooledEther,
+  totalSupply,
+  withdrawalsBalance
+} from './utils'
+
+export function loadStakeTogether(): StakeTogether {
+  let st = new StakeTogether('st')
+
+  st.contractBalance = BigInt.fromI32(0)
+  st.beaconBalance = BigInt.fromI32(0)
+  st.transientBalance = BigInt.fromI32(0)
+  st.liquidityBufferBalance = BigInt.fromI32(0)
+  st.validatorBufferBalance = BigInt.fromI32(0)
+
+  st.poolBalance = BigInt.fromI32(0)
+  st.poolBufferBalance = BigInt.fromI32(0)
+  st.withdrawalsBalance = BigInt.fromI32(0)
+
+  st.totalPooledEther = BigInt.fromI32(0)
+  st.totalSupply = BigInt.fromI32(0)
+
+  st.totalShares = BigInt.fromI32(0)
+  st.totalDelegatedShares = BigInt.fromI32(0)
+  st.totalRewardsShares = BigInt.fromI32(0)
+
+  st.save()
+
+  return st
+}
+
+export function updateStakeTogether(): StakeTogether {
+  let st = loadStakeTogether()
+  st.poolBalance = poolBalance()
+  st.poolBufferBalance = poolBufferBalance()
+  st.withdrawalsBalance = withdrawalsBalance()
+  st.totalPooledEther = totalPooledEther()
+  st.totalSupply = totalSupply()
+  st.save()
+  return st
+}
+
+export function loadAccount(id: string): Account {
+  let account = Account.load(id)
+  if (account === null) {
+    account = new Account(id)
+    account.st = 'st'
+    account.address = id
+    account.shares = BigInt.fromI32(0)
+    account.balance = BigInt.fromI32(0)
+    account.sentDelegationsCount = BigInt.fromI32(0)
+    account.rewardsShares = BigInt.fromI32(0)
+    account.save()
+    return account
+  }
+  return account
+}
+
+export function updateAccount(id: string): Account {
+  let account = loadAccount(id)
+  account.balance = balanceOf(id)
+  account.save()
+  return account
+}
+
+export function loadCommunity(id: string): Community {
+  let community = Community.load(id)
+  if (community == null) {
+    community = new Community(id)
+    community.st = 'st'
+    community.address = id
+    community.receivedDelegationsCount = BigInt.fromI32(0)
+    community.delegatedShares = BigInt.fromI32(0)
+    community.delegatedBalance = BigInt.fromI32(0)
+    community.rewardsShares = BigInt.fromI32(0)
+    community.active = true
+    community.save()
+  }
+  return community
+}
+
+export function updateCommunity(id: string): Community {
+  let community = loadCommunity(id)
+
+  community.delegatedBalance = pooledEthByShares(community.delegatedShares)
+  community.save()
+
+  return community
+}
+
+export function loadDelegation(accountId: string, communityId: string): Delegation {
+  const id = `${accountId}-${communityId}`
+  let delegation = Delegation.load(id)
+  if (delegation === null) {
+    delegation = new Delegation(id)
+    delegation.st = 'st'
+    delegation.delegate = accountId
+    delegation.delegated = communityId
+    delegation.delegationShares = BigInt.fromI32(0)
+    delegation.save()
+
+    let account = loadAccount(accountId)
+    let community = loadCommunity(communityId)
+
+    account.sentDelegationsCount = account.sentDelegationsCount.plus(BigInt.fromI32(1))
+    account.save()
+
+    community.receivedDelegationsCount = community.receivedDelegationsCount.plus(BigInt.fromI32(1))
+    community.save()
+  }
+  return delegation
+}
