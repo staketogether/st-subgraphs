@@ -93,15 +93,15 @@ export function handleWithdrawValidatorBuffer(event: WithdrawValidatorBuffer): v
 }
 
 export function handleDepositPool(event: DepositPool): void {
-  // Account -------------------------------------
-  let accountId = event.params.account.toHexString()
-  loadAccount(accountId)
-
   // StakeTogether ----------------------------------
   let st = loadStakeTogether()
   st.contractBalance = st.contractBalance.plus(event.params.amount)
   st.save()
   updateStakeTogether()
+
+  // Account -------------------------------------
+  let accountId = event.params.account.toHexString()
+  loadAccount(accountId)
 }
 
 export function handleWithdrawPool(event: WithdrawPool): void {
@@ -113,6 +113,12 @@ export function handleWithdrawPool(event: WithdrawPool): void {
 }
 
 export function handleTransferShares(event: TransferShares): void {
+  // StakeTogether -------------------------------------
+  let st = loadStakeTogether()
+  st.totalShares = st.totalShares.plus(event.params.sharesAmount)
+  st.save()
+  updateStakeTogether()
+
   // Account From -------------------------------------
   let accountFromId = event.params.from.toHexString()
   if (!accountFromId.includes(zeroAccount)) {
@@ -128,42 +134,36 @@ export function handleTransferShares(event: TransferShares): void {
   accountTo.shares = accountTo.shares.plus(event.params.sharesAmount)
   accountTo.save()
   updateAccount(accountToId)
-
-  // StakeTogether -------------------------------------
-  let st = loadStakeTogether()
-  st.totalShares = st.totalShares.plus(event.params.sharesAmount)
-  st.save()
-  updateStakeTogether()
 }
 
 export function handleBurnShares(event: BurnShares): void {
+  // StakeTogether -------------------------------------
+  let st = loadStakeTogether()
+  st.totalShares = st.totalShares.minus(event.params.sharesAmount)
+  st.save()
+  updateStakeTogether()
+
   // Account -------------------------------------
   let accountId = event.params.account.toHexString()
   let account = loadAccount(accountId)
   account.shares = account.shares.minus(event.params.sharesAmount)
   account.save()
   updateAccount(accountId)
-
-  // StakeTogether -------------------------------------
-  let st = loadStakeTogether()
-  st.totalShares = st.totalShares.minus(event.params.sharesAmount)
-  st.save()
-  updateStakeTogether()
 }
 
 export function handleTransferDelegatedShares(event: TransferDelegatedShares): void {
+  // StakeTogether -------------------------------------
+  let st = loadStakeTogether()
+  st.totalDelegatedShares = st.totalDelegatedShares.plus(event.params.sharesAmount)
+  st.save()
+  updateStakeTogether()
+
   // Community -----------------------------------
   let communityId = event.params.delegated.toHexString()
   let community = loadCommunity(communityId)
   community.delegatedShares = community.delegatedShares.plus(event.params.sharesAmount)
   community.save()
   updateCommunity(communityId)
-
-  // StakeTogether -------------------------------------
-  let st = loadStakeTogether()
-  st.totalDelegatedShares = st.totalDelegatedShares.plus(event.params.sharesAmount)
-  st.save()
-  updateStakeTogether()
 
   // Delegation -------------------------------------
   let accountFromId = event.params.from.toHexString()
@@ -174,6 +174,12 @@ export function handleTransferDelegatedShares(event: TransferDelegatedShares): v
 }
 
 export function handleBurnDelegatedShares(event: BurnDelegatedShares): void {
+  // StakeTogether -------------------------------------
+  let st = loadStakeTogether()
+  st.totalDelegatedShares = st.totalDelegatedShares.minus(event.params.sharesAmount)
+  st.save()
+  updateStakeTogether()
+
   // Community -----------------------------------
   let communityId = event.params.delegate.toHexString()
   let community = loadCommunity(communityId)
@@ -199,27 +205,21 @@ export function handleBurnDelegatedShares(event: BurnDelegatedShares): void {
       accountFrom.save()
     }
   }
-
-  // StakeTogether -------------------------------------
-  let st = loadStakeTogether()
-  st.totalDelegatedShares = st.totalDelegatedShares.minus(event.params.sharesAmount)
-  st.save()
-  updateStakeTogether()
 }
 
 export function handleTransferRewardsShares(event: TransferRewardsShares): void {
+  // StakeTogether -------------------------------------
+  let st = loadStakeTogether()
+  st.totalRewardsShares = st.totalRewardsShares.plus(event.params.sharesAmount)
+  st.save()
+  updateStakeTogether()
+
   // Community -----------------------------------
   let communityId = event.params.to.toHexString()
   let community = loadCommunity(communityId)
   community.rewardsShares = community.rewardsShares.plus(event.params.sharesAmount)
   community.save()
   updateCommunity(communityId)
-
-  // StakeTogether -------------------------------------
-  let st = loadStakeTogether()
-  st.totalRewardsShares = st.totalRewardsShares.plus(event.params.sharesAmount)
-  st.save()
-  updateStakeTogether()
 
   // Todo: Implement Stake Together Rewards
   // Todo: Implement Operator Rewards

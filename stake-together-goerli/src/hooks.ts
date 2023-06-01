@@ -33,6 +33,7 @@ export function loadStakeTogether(): StakeTogether {
     st.totalRewardsShares = BigInt.fromI32(0)
 
     st.save()
+    return st
   }
 
   return st
