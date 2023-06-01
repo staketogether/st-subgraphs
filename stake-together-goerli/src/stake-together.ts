@@ -25,14 +25,18 @@ import {
   updateAccount,
   updateCommunity,
   updateStakeTogether
-} from './actions'
+} from './hooks'
 import { zeroAccount } from './utils'
 
 export function handleBootstrap(event: Bootstrap): void {
   let st = loadStakeTogether()
   st.contractBalance = event.params.balance
+  st.poolBalance = event.params.balance
+  st.poolBufferBalance = event.params.balance
+  st.withdrawalsBalance = event.params.balance
+  st.totalPooledEther = event.params.balance
+  st.totalSupply = event.params.balance
   st.save()
-  updateStakeTogether()
 }
 
 export function handleAddCommunity(event: AddCommunity): void {

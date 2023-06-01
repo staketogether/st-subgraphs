@@ -1,60 +1,45 @@
 import { BigInt } from '@graphprotocol/graph-ts'
-import { Account, StakeTogether } from '../generated/schema'
+import { loadAccount, loadStakeTogether } from './hooks'
 
 export const zeroAccount = '0x0000000000000000000000000000000000000000'
 
 export function poolBalance(): BigInt {
-  let st = StakeTogether.load('st')
+  let st = loadStakeTogether()
 
-  if (st === null) {
-    return BigInt.fromI32(0)
-  } else {
-    return st.contractBalance.minus(st.liquidityBufferBalance).minus(st.validatorBufferBalance)
+  if (st.contractBalance.equals(BigInt.fromI32(0))) {
+    return BigInt.fromI32(1)
   }
+
+  return st.contractBalance.minus(st.liquidityBufferBalance).minus(st.validatorBufferBalance)
 }
 
 export function balanceOf(accountId: string): BigInt {
-  let account = Account.load(accountId)
-
-  if (account === null) {
-    return BigInt.fromI32(0)
-  } else {
-    return pooledEthByShares(account.shares)
-  }
+  let account = loadAccount(accountId)
+  return pooledEthByShares(account.shares)
 }
 
 export function poolBufferBalance(): BigInt {
-  let st = StakeTogether.load('st')
+  let st = loadStakeTogether()
 
-  if (st === null) {
-    return BigInt.fromI32(0)
-  } else {
-    return poolBalance().plus(st.validatorBufferBalance)
-  }
+  return poolBalance().plus(st.validatorBufferBalance)
 }
 
 export function withdrawalsBalance(): BigInt {
-  let st = StakeTogether.load('st')
+  let st = loadStakeTogether()
 
-  if (st === null) {
-    return BigInt.fromI32(0)
-  } else {
-    return poolBalance().plus(st.liquidityBufferBalance)
-  }
+  return poolBalance().plus(st.liquidityBufferBalance)
 }
 
 export function totalPooledEther(): BigInt {
-  let st = StakeTogether.load('st')
+  let st = loadStakeTogether()
 
-  if (st === null) {
-    return BigInt.fromI32(1)
-  } else {
-    return st.contractBalance
-      .plus(st.transientBalance)
-      .plus(st.beaconBalance)
-      .minus(st.liquidityBufferBalance)
-      .minus(st.validatorBufferBalance)
-  }
+  const total = st.contractBalance
+    .plus(st.transientBalance)
+    .plus(st.beaconBalance)
+    .minus(st.liquidityBufferBalance)
+    .minus(st.validatorBufferBalance)
+
+  return total
 }
 
 export function totalSupply(): BigInt {
@@ -62,11 +47,9 @@ export function totalSupply(): BigInt {
 }
 
 export function pooledEthByShares(sharesAmount: BigInt): BigInt {
-  let st = StakeTogether.load('st')
+  let st = loadStakeTogether()
 
-  if (st === null) {
-    return BigInt.fromI32(1)
-  } else {
-    return sharesAmount.times(totalPooledEther()).div(st.totalShares)
-  }
+  const amount = sharesAmount.times(totalPooledEther()).div(st.totalShares)
+
+  return amount
 }

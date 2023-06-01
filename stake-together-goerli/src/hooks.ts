@@ -11,26 +11,29 @@ import {
 } from './utils'
 
 export function loadStakeTogether(): StakeTogether {
-  let st = new StakeTogether('st')
+  let st = StakeTogether.load('st')
 
-  st.contractBalance = BigInt.fromI32(0)
-  st.beaconBalance = BigInt.fromI32(0)
-  st.transientBalance = BigInt.fromI32(0)
-  st.liquidityBufferBalance = BigInt.fromI32(0)
-  st.validatorBufferBalance = BigInt.fromI32(0)
+  if (st === null) {
+    st = new StakeTogether('st')
+    st.contractBalance = BigInt.fromI32(0)
+    st.beaconBalance = BigInt.fromI32(0)
+    st.transientBalance = BigInt.fromI32(0)
+    st.liquidityBufferBalance = BigInt.fromI32(0)
+    st.validatorBufferBalance = BigInt.fromI32(0)
 
-  st.poolBalance = BigInt.fromI32(0)
-  st.poolBufferBalance = BigInt.fromI32(0)
-  st.withdrawalsBalance = BigInt.fromI32(0)
+    st.poolBalance = BigInt.fromI32(0)
+    st.poolBufferBalance = BigInt.fromI32(0)
+    st.withdrawalsBalance = BigInt.fromI32(0)
 
-  st.totalPooledEther = BigInt.fromI32(0)
-  st.totalSupply = BigInt.fromI32(0)
+    st.totalPooledEther = BigInt.fromI32(0)
+    st.totalSupply = BigInt.fromI32(0)
 
-  st.totalShares = BigInt.fromI32(0)
-  st.totalDelegatedShares = BigInt.fromI32(0)
-  st.totalRewardsShares = BigInt.fromI32(0)
+    st.totalShares = BigInt.fromI32(0)
+    st.totalDelegatedShares = BigInt.fromI32(0)
+    st.totalRewardsShares = BigInt.fromI32(0)
 
-  st.save()
+    st.save()
+  }
 
   return st
 }
