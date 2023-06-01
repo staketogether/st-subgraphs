@@ -149,9 +149,8 @@ export function handleTransferDelegatedShares(event: TransferDelegatedShares): v
   community.save()
 
   // Delegation -------------------------------------
-  let accountFromId = event.params.from.toHexString()
   let accountToId = event.params.to.toHexString()
-  let delegation = loadDelegation(accountFromId, accountToId)
+  let delegation = loadDelegation(accountToId, communityId)
   delegation.delegationShares = delegation.delegationShares.plus(event.params.sharesAmount)
   delegation.save()
 }
@@ -173,7 +172,6 @@ export function handleBurnDelegatedShares(event: BurnDelegatedShares): void {
   let accountFromId = event.params.from.toHexString()
   let accountFrom = loadAccount(accountFromId)
   let delegation = loadDelegation(accountFromId, communityId)
-
   delegation.delegationShares = delegation.delegationShares.minus(event.params.sharesAmount)
   delegation.save()
 
