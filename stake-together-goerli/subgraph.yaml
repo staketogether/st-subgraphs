@@ -6,9 +6,9 @@ dataSources:
     name: StakeTogether
     network: goerli
     source:
-      address: '0x29Ee01d70c7bfDe0D85877Df5F8AF7D14fa509AB'
+      address: '0xCdD86DB078eD468a6931617D0A85D06Cd34bedcA'
       abi: StakeTogether
-      startBlock: 9103657
+      startBlock: 9103888
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
