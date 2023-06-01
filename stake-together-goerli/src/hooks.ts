@@ -1,10 +1,8 @@
 import { BigInt } from '@graphprotocol/graph-ts'
 import { Account, Community, Delegation, StakeTogether } from '../generated/schema'
 import {
-  balanceOf,
   poolBalance,
   poolBufferBalance,
-  pooledEthByShares,
   totalPooledEther,
   totalSupply,
   withdrawalsBalance
@@ -32,6 +30,12 @@ export function loadStakeTogether(): StakeTogether {
     st.totalDelegatedShares = BigInt.fromI32(0)
     st.totalRewardsShares = BigInt.fromI32(0)
 
+    st.stakeTogetherFeeRecipient = ''
+    st.operatorFeeRecipient = ''
+
+    st.totalOperatorRewardsShares = BigInt.fromI32(0)
+    st.totalStakeTogetherRewardsShares = BigInt.fromI32(0)
+
     st.save()
     return st
   }
@@ -39,7 +43,7 @@ export function loadStakeTogether(): StakeTogether {
   return st
 }
 
-export function updateStakeTogether(): StakeTogether {
+export function syncStakeTogether(): StakeTogether {
   let st = loadStakeTogether()
   st.poolBalance = poolBalance()
   st.poolBufferBalance = poolBufferBalance()
@@ -57,19 +61,11 @@ export function loadAccount(id: string): Account {
     account.st = 'st'
     account.address = id
     account.shares = BigInt.fromI32(0)
-    account.balance = BigInt.fromI32(0)
     account.sentDelegationsCount = BigInt.fromI32(0)
     account.rewardsShares = BigInt.fromI32(0)
     account.save()
     return account
   }
-  return account
-}
-
-export function updateAccount(id: string): Account {
-  let account = loadAccount(id)
-  account.balance = balanceOf(id)
-  account.save()
   return account
 }
 
@@ -81,20 +77,11 @@ export function loadCommunity(id: string): Community {
     community.address = id
     community.receivedDelegationsCount = BigInt.fromI32(0)
     community.delegatedShares = BigInt.fromI32(0)
-    community.delegatedBalance = BigInt.fromI32(0)
+
     community.rewardsShares = BigInt.fromI32(0)
     community.active = true
     community.save()
   }
-  return community
-}
-
-export function updateCommunity(id: string): Community {
-  let community = loadCommunity(id)
-
-  community.delegatedBalance = pooledEthByShares(community.delegatedShares)
-  community.save()
-
   return community
 }
 

@@ -50,12 +50,12 @@ export function pooledEthByShares(sharesAmount: BigInt): BigInt {
   let st = loadStakeTogether()
 
   log.warning('\n\n\n', [])
-  log.warning('totalPooledEther: {}', [totalPooledEther().toString()])
+  log.warning('totalPooledEther: {}', [st.totalPooledEther.toString()])
   log.warning('sharesAmount: {}', [sharesAmount.toString()])
   log.warning('totalShares: {}', [st.totalShares.toString()])
   log.warning('\n\n\n', [])
 
-  const amount = sharesAmount.times(totalPooledEther()).div(st.totalShares)
+  const amount = sharesAmount.times(st.totalPooledEther).div(st.totalShares)
 
   return amount
 }

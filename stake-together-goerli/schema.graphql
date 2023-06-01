@@ -21,8 +21,11 @@ type StakeTogether @entity {
   totalDelegatedShares: BigInt!
   totalRewardsShares: BigInt!
 
-  stakeTogetherFeeRecipient: Bytes
-  operatorFeeRecipient: Bytes
+  operatorFeeRecipient: String!
+  stakeTogetherFeeRecipient: String!
+
+  totalOperatorRewardsShares: BigInt!
+  totalStakeTogetherRewardsShares: BigInt!
 }
 
 type Account @entity {
@@ -33,9 +36,6 @@ type Account @entity {
 
   shares: BigInt!
   rewardsShares: BigInt!
-
-  balance: BigInt!
-  # rewardsBalance: BigInt!
 
   sentDelegationsCount: BigInt!
   delegations: [Delegation!]! @derivedFrom(field: "delegate")
@@ -51,7 +51,7 @@ type Community @entity {
   delegatedShares: BigInt!
   rewardsShares: BigInt!
 
-  delegatedBalance: BigInt!
+  # delegatedBalance: BigInt!
   # rewardsBalance: BigInt!
 
   receivedDelegationsCount: BigInt!

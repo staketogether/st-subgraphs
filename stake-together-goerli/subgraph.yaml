@@ -39,6 +39,10 @@ dataSources:
           handler: handleDepositValidatorBuffer
         - event: RemoveCommunity(address)
           handler: handleRemoveCommunity
+        - event: SetOperatorFeeRecipient(indexed address)
+          handler: handleSetOperatorFeeRecipient
+        - event: SetStakeTogetherFeeRecipient(indexed address)
+          handler: handleSetStakeTogetherFeeRecipient
         - event: TransferShares(indexed address,indexed address,uint256)
           handler: handleTransferShares
         - event: TransferDelegatedShares(indexed address,indexed address,indexed address,uint256)
