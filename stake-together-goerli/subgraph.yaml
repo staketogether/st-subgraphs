@@ -6,9 +6,9 @@ dataSources:
     name: StakeTogether
     network: goerli
     source:
-      address: '0xCdD86DB078eD468a6931617D0A85D06Cd34bedcA'
+      address: '0x80d3d71594157FcB865dc230AB69d3Ffa719dE3A'
       abi: StakeTogether
-      startBlock: 9103888
+      startBlock: 9109040
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -43,14 +43,18 @@ dataSources:
           handler: handleSetOperatorFeeRecipient
         - event: SetStakeTogetherFeeRecipient(indexed address)
           handler: handleSetStakeTogetherFeeRecipient
+        - event: TransferCommunityRewards(indexed address,indexed address,uint256)
+          handler: handleTransferCommunityRewards
         - event: TransferShares(indexed address,indexed address,uint256)
           handler: handleTransferShares
         - event: TransferDelegatedShares(indexed address,indexed address,indexed address,uint256)
           handler: handleTransferDelegatedShares
-        - event: TransferRewardsShares(indexed address,indexed address,uint256)
-          handler: handleTransferRewardsShares
         - event: WithdrawLiquidityBuffer(indexed address,uint256)
           handler: handleWithdrawLiquidityBuffer
+        - event: TransferOperatorRewards(indexed address,indexed address,uint256)
+          handler: handleTransferOperatorRewards
+        - event: TransferStakeTogetherRewards(indexed address,indexed address,uint256)
+          handler: handleTransferStakeTogetherRewards
         - event: WithdrawPool(indexed address,uint256,uint256,address)
           handler: handleWithdrawPool
         - event: WithdrawValidatorBuffer(indexed address,uint256)

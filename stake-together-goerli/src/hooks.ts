@@ -33,6 +33,7 @@ export function loadStakeTogether(): StakeTogether {
     st.stakeTogetherFeeRecipient = ''
     st.operatorFeeRecipient = ''
 
+    st.totalCommunityRewardsShares = BigInt.fromI32(0)
     st.totalOperatorRewardsShares = BigInt.fromI32(0)
     st.totalStakeTogetherRewardsShares = BigInt.fromI32(0)
 

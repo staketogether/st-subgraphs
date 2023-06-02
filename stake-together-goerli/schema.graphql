@@ -24,6 +24,7 @@ type StakeTogether @entity {
   operatorFeeRecipient: String!
   stakeTogetherFeeRecipient: String!
 
+  totalCommunityRewardsShares: BigInt!
   totalOperatorRewardsShares: BigInt!
   totalStakeTogetherRewardsShares: BigInt!
 }

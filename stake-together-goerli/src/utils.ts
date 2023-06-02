@@ -2,6 +2,7 @@ import { BigInt, log } from '@graphprotocol/graph-ts'
 import { loadAccount, loadStakeTogether } from './hooks'
 
 export const zeroAccount = '0x0000000000000000000000000000000000000000'
+export const contractAddress = '0x80d3d71594157fcb865dc230ab69d3ffa719de3a'
 
 export function poolBalance(): BigInt {
   let st = loadStakeTogether()

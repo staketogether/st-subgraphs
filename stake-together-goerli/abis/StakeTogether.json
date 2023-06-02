@@ -86,7 +86,7 @@
       {
         "indexed": true,
         "internalType": "address",
-        "name": "delegate",
+        "name": "delegated",
         "type": "address"
       },
       {
@@ -531,6 +531,31 @@
         "type": "address"
       },
       {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "sharesAmount",
+        "type": "uint256"
+      }
+    ],
+    "name": "TransferCommunityRewards",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "from",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "to",
+        "type": "address"
+      },
+      {
         "indexed": true,
         "internalType": "address",
         "name": "delegated",
@@ -544,6 +569,31 @@
       }
     ],
     "name": "TransferDelegatedShares",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "from",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "to",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "sharesAmount",
+        "type": "uint256"
+      }
+    ],
+    "name": "TransferOperatorRewards",
     "type": "event"
   },
   {
@@ -599,7 +649,7 @@
         "type": "uint256"
       }
     ],
-    "name": "TransferRewardsShares",
+    "name": "TransferShares",
     "type": "event"
   },
   {
@@ -624,7 +674,7 @@
         "type": "uint256"
       }
     ],
-    "name": "TransferShares",
+    "name": "TransferStakeTogetherRewards",
     "type": "event"
   },
   {
