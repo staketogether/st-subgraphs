@@ -64,6 +64,13 @@ export function loadAccount(id: string): Account {
     account.shares = BigInt.fromI32(0)
     account.sentDelegationsCount = BigInt.fromI32(0)
     account.rewardsShares = BigInt.fromI32(0)
+
+    account.depositBalance = BigInt.fromI32(0)
+    account.withdrawBalance = BigInt.fromI32(0)
+    account.originalBalance = BigInt.fromI32(0)
+    account.currentBalance = BigInt.fromI32(0)
+    account.rewardsBalance = BigInt.fromI32(0)
+
     account.save()
     return account
   }

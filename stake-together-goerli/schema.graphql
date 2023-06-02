@@ -38,6 +38,12 @@ type Account @entity {
   shares: BigInt!
   rewardsShares: BigInt!
 
+  depositBalance: BigInt!
+  withdrawBalance: BigInt!
+  originalBalance: BigInt!
+  currentBalance: BigInt!
+  rewardsBalance: BigInt!
+
   sentDelegationsCount: BigInt!
   delegations: [Delegation!]! @derivedFrom(field: "delegate")
 }

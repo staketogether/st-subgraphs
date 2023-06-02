@@ -1,4 +1,4 @@
-import { BigInt } from '@graphprotocol/graph-ts'
+import { BigInt, log } from '@graphprotocol/graph-ts'
 import {
   AddCommunity,
   Bootstrap,
@@ -22,7 +22,7 @@ import {
   WithdrawValidatorBuffer
 } from '../generated/StakeTogether/StakeTogether'
 import { loadAccount, loadCommunity, loadDelegation, loadStakeTogether, syncStakeTogether } from './hooks'
-import { contractAddress, zeroAccount } from './utils'
+import { balanceOf, contractAddress, zeroAccount } from './utils'
 
 export function handleBootstrap(event: Bootstrap): void {
   let st = loadStakeTogether()
@@ -91,6 +91,12 @@ export function handleDepositPool(event: DepositPool): void {
   st.contractBalance = st.contractBalance.plus(event.params.amount)
   st.save()
   syncStakeTogether()
+
+  // Account -------------------------------------
+  let accountId = event.params.account.toHexString()
+  let account = loadAccount(accountId)
+  account.depositBalance = account.depositBalance.plus(event.params.amount)
+  account.save()
 }
 
 export function handleWithdrawPool(event: WithdrawPool): void {
@@ -99,6 +105,12 @@ export function handleWithdrawPool(event: WithdrawPool): void {
   st.contractBalance = st.contractBalance.minus(event.params.amount)
   st.save()
   syncStakeTogether()
+
+  // Account -------------------------------------
+  let accountId = event.params.account.toHexString()
+  let account = loadAccount(accountId)
+  account.withdrawBalance = account.withdrawBalance.plus(event.params.amount)
+  account.save()
 }
 
 export function handleTransferShares(event: TransferShares): void {
@@ -114,6 +126,11 @@ export function handleTransferShares(event: TransferShares): void {
     let accountFrom = loadAccount(accountFromId)
     accountFrom.shares = accountFrom.shares.minus(event.params.sharesAmount)
     accountFrom.save()
+
+    accountFrom.originalBalance = accountFrom.depositBalance.minus(accountFrom.withdrawBalance)
+    accountFrom.currentBalance = balanceOf(accountFromId)
+    accountFrom.rewardsBalance = accountFrom.currentBalance.minus(accountFrom.originalBalance)
+    accountFrom.save()
   }
 
   // Account To -----------------------------------
@@ -121,6 +138,13 @@ export function handleTransferShares(event: TransferShares): void {
   let accountTo = loadAccount(accountToId)
   accountTo.shares = accountTo.shares.plus(event.params.sharesAmount)
   accountTo.save()
+
+  accountTo.originalBalance = accountTo.depositBalance.minus(accountTo.withdrawBalance)
+  accountTo.currentBalance = balanceOf(accountToId)
+  accountTo.rewardsBalance = accountTo.currentBalance.minus(accountTo.originalBalance)
+  accountTo.save()
+
+  log.warning('\n\n\n\n ORIGINAL_BALANCE: {}\n\n\n\n', [accountTo.originalBalance.toString()])
 }
 
 export function handleBurnShares(event: BurnShares): void {
@@ -134,6 +158,11 @@ export function handleBurnShares(event: BurnShares): void {
   let accountId = event.params.account.toHexString()
   let account = loadAccount(accountId)
   account.shares = account.shares.minus(event.params.sharesAmount)
+  account.save()
+
+  account.originalBalance = account.depositBalance.minus(account.withdrawBalance)
+  account.currentBalance = balanceOf(accountId)
+  account.rewardsBalance = account.currentBalance.minus(account.originalBalance)
   account.save()
 }
 
