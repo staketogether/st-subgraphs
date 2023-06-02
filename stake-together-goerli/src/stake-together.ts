@@ -144,7 +144,7 @@ export function handleTransferDelegatedShares(event: TransferDelegatedShares): v
   st.save()
   syncStakeTogether()
 
-  if (event.params.delegated.toHexString() === contractAddress) {
+  if (event.params.delegated.toHexString() == contractAddress) {
     return
   }
 
@@ -167,6 +167,10 @@ export function handleBurnDelegatedShares(event: BurnDelegatedShares): void {
   st.totalDelegatedShares = st.totalDelegatedShares.minus(event.params.sharesAmount)
   st.save()
   syncStakeTogether()
+
+  if (event.params.delegated.toHexString() == contractAddress) {
+    return
+  }
 
   // Community -----------------------------------
   let communityId = event.params.delegated.toHexString()
