@@ -27,7 +27,7 @@
         "type": "address"
       }
     ],
-    "name": "AddCommunity",
+    "name": "AddPool",
     "type": "event"
   },
   {
@@ -265,13 +265,131 @@
     "anonymous": false,
     "inputs": [
       {
+        "indexed": true,
+        "internalType": "address",
+        "name": "from",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "to",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "delegated",
+        "type": "address"
+      },
+      {
         "indexed": false,
         "internalType": "uint256",
-        "name": "fee",
+        "name": "sharesAmount",
         "type": "uint256"
       }
     ],
-    "name": "OperatorFeeSet",
+    "name": "MintDelegatedShares",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "from",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "to",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "sharesAmount",
+        "type": "uint256"
+      }
+    ],
+    "name": "MintOperatorRewards",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "from",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "to",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "sharesAmount",
+        "type": "uint256"
+      }
+    ],
+    "name": "MintPoolRewards",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "from",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "to",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "sharesAmount",
+        "type": "uint256"
+      }
+    ],
+    "name": "MintShares",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "from",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "to",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "sharesAmount",
+        "type": "uint256"
+      }
+    ],
+    "name": "MintStakeTogetherRewards",
     "type": "event"
   },
   {
@@ -348,7 +466,7 @@
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "communityFee",
+        "name": "poolFee",
         "type": "uint256"
       },
       {
@@ -366,7 +484,7 @@
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "communityFeeShares",
+        "name": "poolFeeShares",
         "type": "uint256"
       }
     ],
@@ -383,7 +501,7 @@
         "type": "address"
       }
     ],
-    "name": "RemoveCommunity",
+    "name": "RemovePool",
     "type": "event"
   },
   {
@@ -405,11 +523,11 @@
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "fee",
+        "name": "amount",
         "type": "uint256"
       }
     ],
-    "name": "SetCommunityFee",
+    "name": "SetMinDepositPoolAmount",
     "type": "event"
   },
   {
@@ -418,11 +536,11 @@
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "amount",
+        "name": "fee",
         "type": "uint256"
       }
     ],
-    "name": "SetMinDepositPoolAmount",
+    "name": "SetOperatorFee",
     "type": "event"
   },
   {
@@ -435,7 +553,46 @@
         "type": "address"
       }
     ],
-    "name": "SetOperatorFeeRecipient",
+    "name": "SetOperatorFeeAddress",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "fee",
+        "type": "uint256"
+      }
+    ],
+    "name": "SetPoolFee",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "to",
+        "type": "address"
+      }
+    ],
+    "name": "SetPoolModuleAddress",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "SetPoolSize",
     "type": "event"
   },
   {
@@ -461,7 +618,7 @@
         "type": "address"
       }
     ],
-    "name": "SetStakeTogetherFeeRecipient",
+    "name": "SetStakeTogetherFeeAddress",
     "type": "event"
   },
   {
@@ -475,6 +632,19 @@
       }
     ],
     "name": "SetTransientBalance",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "to",
+        "type": "address"
+      }
+    ],
+    "name": "SetValidatorModuleAddress",
     "type": "event"
   },
   {
@@ -531,31 +701,6 @@
         "type": "address"
       },
       {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "sharesAmount",
-        "type": "uint256"
-      }
-    ],
-    "name": "TransferCommunityRewards",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "from",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "to",
-        "type": "address"
-      },
-      {
         "indexed": true,
         "internalType": "address",
         "name": "delegated",
@@ -569,31 +714,6 @@
       }
     ],
     "name": "TransferDelegatedShares",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "from",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "to",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "sharesAmount",
-        "type": "uint256"
-      }
-    ],
-    "name": "TransferOperatorRewards",
     "type": "event"
   },
   {
@@ -650,31 +770,6 @@
       }
     ],
     "name": "TransferShares",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "from",
-        "type": "address"
-      },
-      {
-        "indexed": true,
-        "internalType": "address",
-        "name": "to",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "sharesAmount",
-        "type": "uint256"
-      }
-    ],
-    "name": "TransferStakeTogetherRewards",
     "type": "event"
   },
   {
@@ -769,7 +864,7 @@
   },
   {
     "inputs": [{ "internalType": "address", "name": "account", "type": "address" }],
-    "name": "addCommunity",
+    "name": "addPool",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -811,13 +906,6 @@
   {
     "inputs": [],
     "name": "beaconBalance",
-    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "communityFee",
     "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
     "type": "function"
@@ -940,7 +1028,7 @@
   },
   {
     "inputs": [],
-    "name": "getCommunities",
+    "name": "getPools",
     "outputs": [{ "internalType": "address[]", "name": "", "type": "address[]" }],
     "stateMutability": "view",
     "type": "function"
@@ -971,7 +1059,7 @@
   },
   {
     "inputs": [{ "internalType": "address", "name": "account", "type": "address" }],
-    "name": "isCommunity",
+    "name": "isPool",
     "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
     "stateMutability": "view",
     "type": "function"
@@ -1027,7 +1115,7 @@
   },
   {
     "inputs": [],
-    "name": "operatorFeeRecipient",
+    "name": "operatorFeeAddress",
     "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
     "stateMutability": "view",
     "type": "function"
@@ -1084,6 +1172,20 @@
   },
   {
     "inputs": [],
+    "name": "poolFee",
+    "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "poolModuleAddress",
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "poolSize",
     "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
     "stateMutability": "view",
@@ -1098,7 +1200,7 @@
   },
   {
     "inputs": [{ "internalType": "address", "name": "account", "type": "address" }],
-    "name": "removeCommunity",
+    "name": "removePool",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -1113,13 +1215,6 @@
   {
     "inputs": [{ "internalType": "uint256", "name": "_beaconBalance", "type": "uint256" }],
     "name": "setBeaconBalance",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [{ "internalType": "uint256", "name": "_fee", "type": "uint256" }],
-    "name": "setCommunityFee",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -1140,7 +1235,28 @@
   },
   {
     "inputs": [{ "internalType": "address", "name": "_to", "type": "address" }],
-    "name": "setOperatorFeeRecipient",
+    "name": "setOperatorFeeAddress",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [{ "internalType": "uint256", "name": "_fee", "type": "uint256" }],
+    "name": "setPoolFee",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [{ "internalType": "address", "name": "_to", "type": "address" }],
+    "name": "setPoolModuleAddress",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [{ "internalType": "uint256", "name": "_amount", "type": "uint256" }],
+    "name": "setPoolSize",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -1154,7 +1270,7 @@
   },
   {
     "inputs": [{ "internalType": "address", "name": "_to", "type": "address" }],
-    "name": "setStakeTogetherFeeRecipient",
+    "name": "setStakeTogetherFeeAddress",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -1168,6 +1284,13 @@
       }
     ],
     "name": "setTransientBalance",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [{ "internalType": "address", "name": "_to", "type": "address" }],
+    "name": "setValidatorModuleAddress",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -1208,7 +1331,7 @@
   },
   {
     "inputs": [],
-    "name": "stakeTogetherFeeRecipient",
+    "name": "stakeTogetherFeeAddress",
     "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
     "stateMutability": "view",
     "type": "function"
@@ -1344,6 +1467,13 @@
     "inputs": [],
     "name": "validatorBufferBalance",
     "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "validatorModuleAddress",
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
     "stateMutability": "view",
     "type": "function"
   },

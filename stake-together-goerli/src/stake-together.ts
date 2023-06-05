@@ -1,52 +1,52 @@
-import { BigInt, log } from '@graphprotocol/graph-ts'
+import { BigInt } from '@graphprotocol/graph-ts'
 import {
-  AddCommunity,
+  AddPool,
   Bootstrap,
   BurnDelegatedShares,
   BurnShares,
   DepositLiquidityBuffer,
   DepositPool,
   DepositValidatorBuffer,
-  RemoveCommunity,
+  MintOperatorRewards,
+  MintPoolRewards,
+  MintStakeTogetherRewards,
+  RemovePool,
   SetBeaconBalance,
-  SetOperatorFeeRecipient,
-  SetStakeTogetherFeeRecipient,
+  SetOperatorFeeAddress,
+  SetStakeTogetherFeeAddress,
   SetTransientBalance,
-  TransferCommunityRewards,
   TransferDelegatedShares,
-  TransferOperatorRewards,
   TransferShares,
-  TransferStakeTogetherRewards,
   WithdrawLiquidityBuffer,
   WithdrawPool,
   WithdrawValidatorBuffer
 } from '../generated/StakeTogether/StakeTogether'
-import { loadAccount, loadCommunity, loadDelegation, loadStakeTogether, syncStakeTogether } from './hooks'
-import { balanceOf, contractAddress, zeroAccount } from './utils'
+import { loadAccount, loadDelegation, loadPool, loadStakeTogether, syncStakeTogether } from './hooks'
+import { balanceOf, contractAddress } from './utils'
 
 export function handleBootstrap(event: Bootstrap): void {
   let st = loadStakeTogether()
   st.contractBalance = event.params.balance
-  st.operatorFeeRecipient = event.params.sender.toHexString()
-  st.stakeTogetherFeeRecipient = event.params.sender.toHexString()
+  st.operatorFeeAddress = event.params.sender.toHexString()
+  st.stakeTogetherFeeAddress = event.params.sender.toHexString()
   st.save()
   syncStakeTogether()
 }
 
-export function handleAddCommunity(event: AddCommunity): void {
+export function handleAddPool(event: AddPool): void {
   // Account  -------------------------------------
   let accountId = event.params.account.toHexString()
   loadAccount(accountId)
-  // Community -----------------------------------
-  loadCommunity(accountId)
+  // Pool -----------------------------------
+  loadPool(accountId)
 }
 
-export function handleRemoveCommunity(event: RemoveCommunity): void {
-  // Community -----------------------------------
-  let communityId = event.params.account.toHexString()
-  let community = loadCommunity(communityId)
-  community.active = false
-  community.save()
+export function handleRemovePool(event: RemovePool): void {
+  // Pool -----------------------------------
+  let poolId = event.params.account.toHexString()
+  let pool = loadPool(poolId)
+  pool.active = false
+  pool.save()
 }
 
 export function handleDepositLiquidityBuffer(event: DepositLiquidityBuffer): void {
@@ -113,25 +113,12 @@ export function handleWithdrawPool(event: WithdrawPool): void {
   account.save()
 }
 
-export function handleTransferShares(event: TransferShares): void {
+export function handleMintShares(event: TransferShares): void {
   // StakeTogether -------------------------------------
   let st = loadStakeTogether()
   st.totalShares = st.totalShares.plus(event.params.sharesAmount)
   st.save()
   syncStakeTogether()
-
-  // Account From -------------------------------------
-  let accountFromId = event.params.from.toHexString()
-  if (!accountFromId.includes(zeroAccount)) {
-    let accountFrom = loadAccount(accountFromId)
-    accountFrom.shares = accountFrom.shares.minus(event.params.sharesAmount)
-    accountFrom.save()
-
-    accountFrom.originalBalance = accountFrom.depositBalance.minus(accountFrom.withdrawBalance)
-    accountFrom.currentBalance = balanceOf(accountFromId)
-    accountFrom.rewardsBalance = accountFrom.currentBalance.minus(accountFrom.originalBalance)
-    accountFrom.save()
-  }
 
   // Account To -----------------------------------
   let accountToId = event.params.to.toHexString()
@@ -143,8 +130,29 @@ export function handleTransferShares(event: TransferShares): void {
   accountTo.currentBalance = balanceOf(accountToId)
   accountTo.rewardsBalance = accountTo.currentBalance.minus(accountTo.originalBalance)
   accountTo.save()
+}
 
-  log.warning('\n\n\n\n ORIGINAL_BALANCE: {}\n\n\n\n', [accountTo.originalBalance.toString()])
+export function handleTransferShares(event: TransferShares): void {
+  // Account From -------------------------------------
+  let accountFromId = event.params.from.toHexString()
+
+  let accountFrom = loadAccount(accountFromId)
+  accountFrom.shares = accountFrom.shares.minus(event.params.sharesAmount)
+  accountFrom.save()
+  accountFrom.originalBalance = accountFrom.depositBalance.minus(accountFrom.withdrawBalance)
+  accountFrom.currentBalance = balanceOf(accountFromId)
+  accountFrom.rewardsBalance = accountFrom.currentBalance.minus(accountFrom.originalBalance)
+  accountFrom.save()
+
+  // Account To -----------------------------------
+  let accountToId = event.params.to.toHexString()
+  let accountTo = loadAccount(accountToId)
+  accountTo.shares = accountTo.shares.plus(event.params.sharesAmount)
+  accountTo.save()
+  accountTo.originalBalance = accountTo.depositBalance.minus(accountTo.withdrawBalance)
+  accountTo.currentBalance = balanceOf(accountToId)
+  accountTo.rewardsBalance = accountTo.currentBalance.minus(accountTo.originalBalance)
+  accountTo.save()
 }
 
 export function handleBurnShares(event: BurnShares): void {
@@ -177,15 +185,15 @@ export function handleTransferDelegatedShares(event: TransferDelegatedShares): v
     return
   }
 
-  // Community -----------------------------------
-  let communityId = event.params.delegated.toHexString()
-  let community = loadCommunity(communityId)
-  community.delegatedShares = community.delegatedShares.plus(event.params.sharesAmount)
-  community.save()
+  // Pool -----------------------------------
+  let poolId = event.params.delegated.toHexString()
+  let pool = loadPool(poolId)
+  pool.delegatedShares = pool.delegatedShares.plus(event.params.sharesAmount)
+  pool.save()
 
   // Delegation -------------------------------------
   let accountToId = event.params.to.toHexString()
-  let delegation = loadDelegation(accountToId, communityId)
+  let delegation = loadDelegation(accountToId, poolId)
   delegation.delegationShares = delegation.delegationShares.plus(event.params.sharesAmount)
   delegation.save()
 }
@@ -201,23 +209,23 @@ export function handleBurnDelegatedShares(event: BurnDelegatedShares): void {
     return
   }
 
-  // Community -----------------------------------
-  let communityId = event.params.delegated.toHexString()
-  let community = loadCommunity(communityId)
-  community.delegatedShares = community.delegatedShares.minus(event.params.sharesAmount)
-  community.save()
+  // Pool -----------------------------------
+  let poolId = event.params.delegated.toHexString()
+  let pool = loadPool(poolId)
+  pool.delegatedShares = pool.delegatedShares.minus(event.params.sharesAmount)
+  pool.save()
 
   // Delegation -------------------------------------
   let accountFromId = event.params.from.toHexString()
   let accountFrom = loadAccount(accountFromId)
-  let delegation = loadDelegation(accountFromId, communityId)
+  let delegation = loadDelegation(accountFromId, poolId)
   delegation.delegationShares = delegation.delegationShares.minus(event.params.sharesAmount)
   delegation.save()
 
   if (delegation.delegationShares.le(BigInt.fromI32(0))) {
-    if (community.receivedDelegationsCount.gt(BigInt.fromI32(0))) {
-      community.receivedDelegationsCount = community.receivedDelegationsCount.minus(BigInt.fromI32(1))
-      community.save()
+    if (pool.receivedDelegationsCount.gt(BigInt.fromI32(0))) {
+      pool.receivedDelegationsCount = pool.receivedDelegationsCount.minus(BigInt.fromI32(1))
+      pool.save()
     }
     if (accountFrom.sentDelegationsCount.gt(BigInt.fromI32(0))) {
       accountFrom.sentDelegationsCount = accountFrom.sentDelegationsCount.minus(BigInt.fromI32(1))
@@ -226,22 +234,7 @@ export function handleBurnDelegatedShares(event: BurnDelegatedShares): void {
   }
 }
 
-export function handleTransferCommunityRewards(event: TransferCommunityRewards): void {
-  // StakeTogether -------------------------------------
-  let st = loadStakeTogether()
-  st.totalRewardsShares = st.totalRewardsShares.plus(event.params.sharesAmount)
-  st.totalCommunityRewardsShares = st.totalCommunityRewardsShares.plus(event.params.sharesAmount)
-  st.save()
-  syncStakeTogether()
-
-  // Community -----------------------------------
-  let communityId = event.params.to.toHexString()
-  let community = loadCommunity(communityId)
-  community.rewardsShares = community.rewardsShares.plus(event.params.sharesAmount)
-  community.save()
-}
-
-export function handleTransferOperatorRewards(event: TransferOperatorRewards): void {
+export function handleMintOperatorRewards(event: MintOperatorRewards): void {
   // StakeTogether -------------------------------------
   let st = loadStakeTogether()
   st.totalRewardsShares = st.totalRewardsShares.plus(event.params.sharesAmount)
@@ -250,13 +243,28 @@ export function handleTransferOperatorRewards(event: TransferOperatorRewards): v
   syncStakeTogether()
 }
 
-export function handleTransferStakeTogetherRewards(event: TransferStakeTogetherRewards): void {
+export function handleMintStakeTogetherRewards(event: MintStakeTogetherRewards): void {
   // StakeTogether -------------------------------------
   let st = loadStakeTogether()
   st.totalRewardsShares = st.totalRewardsShares.plus(event.params.sharesAmount)
   st.totalStakeTogetherRewardsShares = st.totalStakeTogetherRewardsShares.plus(event.params.sharesAmount)
   st.save()
   syncStakeTogether()
+}
+
+export function handleMintPoolRewards(event: MintPoolRewards): void {
+  // StakeTogether -------------------------------------
+  let st = loadStakeTogether()
+  st.totalRewardsShares = st.totalRewardsShares.plus(event.params.sharesAmount)
+  st.totalPoolRewardsShares = st.totalPoolRewardsShares.plus(event.params.sharesAmount)
+  st.save()
+  syncStakeTogether()
+
+  // Pool -----------------------------------
+  let poolId = event.params.to.toHexString()
+  let pool = loadPool(poolId)
+  pool.rewardsShares = pool.rewardsShares.plus(event.params.sharesAmount)
+  pool.save()
 }
 
 export function handleSetTransientBalance(event: SetTransientBalance): void {
@@ -275,16 +283,16 @@ export function handleSetBeaconBalance(event: SetBeaconBalance): void {
   syncStakeTogether()
 }
 
-export function handleSetOperatorFeeRecipient(event: SetOperatorFeeRecipient): void {
+export function handleSetOperatorFeeAddress(event: SetOperatorFeeAddress): void {
   let st = loadStakeTogether()
-  st.operatorFeeRecipient = event.params.to.toHexString()
+  st.operatorFeeAddress = event.params.to.toHexString()
   st.save()
   syncStakeTogether()
 }
 
-export function handleSetStakeTogetherFeeRecipient(event: SetStakeTogetherFeeRecipient): void {
+export function handleSetStakeTogetherFeeAddress(event: SetStakeTogetherFeeAddress): void {
   let st = loadStakeTogether()
-  st.stakeTogetherFeeRecipient = event.params.to.toHexString()
+  st.stakeTogetherFeeAddress = event.params.to.toHexString()
   st.save()
   syncStakeTogether()
 }

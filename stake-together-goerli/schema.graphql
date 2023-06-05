@@ -2,7 +2,7 @@ type StakeTogether @entity {
   id: ID!
 
   accounts: [Account!]! @derivedFrom(field: "st")
-  communities: [Community!]! @derivedFrom(field: "st")
+  communities: [Pool!]! @derivedFrom(field: "st")
   delegations: [Delegation!]! @derivedFrom(field: "st")
 
   contractBalance: BigInt!
@@ -21,10 +21,10 @@ type StakeTogether @entity {
   totalDelegatedShares: BigInt!
   totalRewardsShares: BigInt!
 
-  operatorFeeRecipient: String!
-  stakeTogetherFeeRecipient: String!
+  operatorFeeAddress: String!
+  stakeTogetherFeeAddress: String!
 
-  totalCommunityRewardsShares: BigInt!
+  totalPoolRewardsShares: BigInt!
   totalOperatorRewardsShares: BigInt!
   totalStakeTogetherRewardsShares: BigInt!
 }
@@ -48,7 +48,7 @@ type Account @entity {
   delegations: [Delegation!]! @derivedFrom(field: "delegate")
 }
 
-type Community @entity {
+type Pool @entity {
   id: ID!
   st: StakeTogether!
 
@@ -70,7 +70,7 @@ type Delegation @entity {
   st: StakeTogether!
 
   delegate: Account!
-  delegated: Community!
+  delegated: Pool!
 
   delegationShares: BigInt!
 

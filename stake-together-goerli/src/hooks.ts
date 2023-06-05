@@ -1,5 +1,5 @@
 import { BigInt } from '@graphprotocol/graph-ts'
-import { Account, Community, Delegation, StakeTogether } from '../generated/schema'
+import { Account, Delegation, Pool, StakeTogether } from '../generated/schema'
 import {
   poolBalance,
   poolBufferBalance,
@@ -30,10 +30,10 @@ export function loadStakeTogether(): StakeTogether {
     st.totalDelegatedShares = BigInt.fromI32(0)
     st.totalRewardsShares = BigInt.fromI32(0)
 
-    st.stakeTogetherFeeRecipient = ''
-    st.operatorFeeRecipient = ''
+    st.stakeTogetherFeeAddress = ''
+    st.operatorFeeAddress = ''
 
-    st.totalCommunityRewardsShares = BigInt.fromI32(0)
+    st.totalPoolRewardsShares = BigInt.fromI32(0)
     st.totalOperatorRewardsShares = BigInt.fromI32(0)
     st.totalStakeTogetherRewardsShares = BigInt.fromI32(0)
 
@@ -77,41 +77,41 @@ export function loadAccount(id: string): Account {
   return account
 }
 
-export function loadCommunity(id: string): Community {
-  let community = Community.load(id)
-  if (community == null) {
-    community = new Community(id)
-    community.st = 'st'
-    community.address = id
-    community.receivedDelegationsCount = BigInt.fromI32(0)
-    community.delegatedShares = BigInt.fromI32(0)
+export function loadPool(id: string): Pool {
+  let pool = Pool.load(id)
+  if (pool == null) {
+    pool = new Pool(id)
+    pool.st = 'st'
+    pool.address = id
+    pool.receivedDelegationsCount = BigInt.fromI32(0)
+    pool.delegatedShares = BigInt.fromI32(0)
 
-    community.rewardsShares = BigInt.fromI32(0)
-    community.active = true
-    community.save()
+    pool.rewardsShares = BigInt.fromI32(0)
+    pool.active = true
+    pool.save()
   }
-  return community
+  return pool
 }
 
-export function loadDelegation(accountId: string, communityId: string): Delegation {
-  const id = `${accountId}-${communityId}`
+export function loadDelegation(accountId: string, poolId: string): Delegation {
+  const id = `${accountId}-${poolId}`
   let delegation = Delegation.load(id)
   if (delegation === null) {
     delegation = new Delegation(id)
     delegation.st = 'st'
     delegation.delegate = accountId
-    delegation.delegated = communityId
+    delegation.delegated = poolId
     delegation.delegationShares = BigInt.fromI32(0)
     delegation.save()
 
     let account = loadAccount(accountId)
-    let community = loadCommunity(communityId)
+    let pool = loadPool(poolId)
 
     account.sentDelegationsCount = account.sentDelegationsCount.plus(BigInt.fromI32(1))
     account.save()
 
-    community.receivedDelegationsCount = community.receivedDelegationsCount.plus(BigInt.fromI32(1))
-    community.save()
+    pool.receivedDelegationsCount = pool.receivedDelegationsCount.plus(BigInt.fromI32(1))
+    pool.save()
   }
   return delegation
 }
