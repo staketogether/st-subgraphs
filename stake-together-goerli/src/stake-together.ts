@@ -7,6 +7,7 @@ import {
   DepositLiquidityBuffer,
   DepositPool,
   DepositValidatorBuffer,
+  MintDelegatedShares,
   MintOperatorRewards,
   MintPoolRewards,
   MintStakeTogetherRewards,
@@ -15,7 +16,6 @@ import {
   SetOperatorFeeAddress,
   SetStakeTogetherFeeAddress,
   SetTransientBalance,
-  TransferDelegatedShares,
   TransferShares,
   WithdrawLiquidityBuffer,
   WithdrawPool,
@@ -174,7 +174,7 @@ export function handleBurnShares(event: BurnShares): void {
   account.save()
 }
 
-export function handleTransferDelegatedShares(event: TransferDelegatedShares): void {
+export function handleMintDelegatedShares(event: MintDelegatedShares): void {
   // StakeTogether -------------------------------------
   let st = loadStakeTogether()
   st.totalDelegatedShares = st.totalDelegatedShares.plus(event.params.sharesAmount)

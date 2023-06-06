@@ -6,9 +6,9 @@ dataSources:
     name: StakeTogether
     network: goerli
     source:
-      address: '0xC549e7dcB7b7B66Cb90c25748C2cF5be9036dbA4'
+      address: '0xC34bAB05746f4Ba8dfB489a0c2A8cdC2C34eDA74'
       abi: StakeTogether
-      startBlock: 9127899
+      startBlock: 9130409
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -42,6 +42,8 @@ dataSources:
           handler: handleDepositValidatorBuffer
         - event: MintShares(indexed address,indexed address,uint256)
           handler: handleMintShares
+        - event: MintDelegatedShares(indexed address,indexed address,indexed address,uint256)
+          handler: handleMintDelegatedShares
         - event: MintOperatorRewards(indexed address,indexed address,uint256)
           handler: handleMintOperatorRewards
         - event: MintPoolRewards(indexed address,indexed address,uint256)
@@ -56,8 +58,6 @@ dataSources:
           handler: handleSetStakeTogetherFeeAddress
         - event: TransferShares(indexed address,indexed address,uint256)
           handler: handleTransferShares
-        - event: TransferDelegatedShares(indexed address,indexed address,indexed address,uint256)
-          handler: handleTransferDelegatedShares
         - event: WithdrawLiquidityBuffer(indexed address,uint256)
           handler: handleWithdrawLiquidityBuffer
         - event: WithdrawPool(indexed address,uint256,uint256,address)

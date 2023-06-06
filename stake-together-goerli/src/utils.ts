@@ -1,8 +1,8 @@
-import { BigInt, log } from '@graphprotocol/graph-ts'
+import { BigInt } from '@graphprotocol/graph-ts'
 import { loadAccount, loadStakeTogether } from './hooks'
 
 export const zeroAccount = '0x0000000000000000000000000000000000000000'
-export const contractAddress = '0x80d3d71594157fcb865dc230ab69d3ffa719de3a'
+export const contractAddress = '0xc34bab05746f4ba8dfb489a0c2a8cdc2c34eda74'
 
 export function poolBalance(): BigInt {
   let st = loadStakeTogether()
@@ -49,12 +49,6 @@ export function totalSupply(): BigInt {
 
 export function pooledEthByShares(sharesAmount: BigInt): BigInt {
   let st = loadStakeTogether()
-
-  log.warning('\n\n\n', [])
-  log.warning('totalPooledEther: {}', [st.totalPooledEther.toString()])
-  log.warning('sharesAmount: {}', [sharesAmount.toString()])
-  log.warning('totalShares: {}', [st.totalShares.toString()])
-  log.warning('\n\n\n', [])
 
   const amount = sharesAmount.times(st.totalPooledEther).div(st.totalShares)
 

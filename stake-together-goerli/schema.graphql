@@ -2,7 +2,7 @@ type StakeTogether @entity {
   id: ID!
 
   accounts: [Account!]! @derivedFrom(field: "st")
-  communities: [Pool!]! @derivedFrom(field: "st")
+  pools: [Pool!]! @derivedFrom(field: "st")
   delegations: [Delegation!]! @derivedFrom(field: "st")
 
   contractBalance: BigInt!
