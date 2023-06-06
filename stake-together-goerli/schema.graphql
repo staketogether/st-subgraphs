@@ -2,7 +2,7 @@ type StakeTogether @entity {
   id: ID!
 
   accounts: [Account!]! @derivedFrom(field: "st")
-  communities: [Community!]! @derivedFrom(field: "st")
+  pools: [Pool!]! @derivedFrom(field: "st")
   delegations: [Delegation!]! @derivedFrom(field: "st")
 
   contractBalance: BigInt!
@@ -21,31 +21,38 @@ type StakeTogether @entity {
   totalDelegatedShares: BigInt!
   totalRewardsShares: BigInt!
 
-  stakeTogetherFeeRecipient: Bytes
-  operatorFeeRecipient: Bytes
+  operatorFeeAddress: String!
+  stakeTogetherFeeAddress: String!
+
+  totalPoolRewardsShares: BigInt!
+  totalOperatorRewardsShares: BigInt!
+  totalStakeTogetherRewardsShares: BigInt!
 }
 
 type Account @entity {
   id: ID!
   st: StakeTogether!
 
-  address: Bytes!
+  address: String!
 
   shares: BigInt!
   rewardsShares: BigInt!
 
-  # balance: BigInt!
-  # rewardsBalance: BigInt!
+  depositBalance: BigInt!
+  withdrawBalance: BigInt!
+  originalBalance: BigInt!
+  currentBalance: BigInt!
+  rewardsBalance: BigInt!
 
-  # delegationsCount: BigInt!
+  sentDelegationsCount: BigInt!
   delegations: [Delegation!]! @derivedFrom(field: "delegate")
 }
 
-type Community @entity {
+type Pool @entity {
   id: ID!
   st: StakeTogether!
 
-  address: Bytes!
+  address: String!
   active: Boolean!
 
   delegatedShares: BigInt!
@@ -54,7 +61,7 @@ type Community @entity {
   # delegatedBalance: BigInt!
   # rewardsBalance: BigInt!
 
-  # delegationsCount: BigInt!
+  receivedDelegationsCount: BigInt!
   delegations: [Delegation!]! @derivedFrom(field: "delegated")
 }
 
@@ -63,7 +70,7 @@ type Delegation @entity {
   st: StakeTogether!
 
   delegate: Account!
-  delegated: Community!
+  delegated: Pool!
 
   delegationShares: BigInt!
 

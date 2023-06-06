@@ -5,13 +5,13 @@ import {
   BufferDeposited,
   BufferWithdrawn,
   BurnDelegatedShares,
-  CommunityAdded,
-  CommunityRemoved,
   ConsensusLayerBalanceUpdated,
   Deposit,
   EIP712DomainChanged,
   OwnershipTransferred,
   Paused,
+  PoolAdded,
+  PoolRemoved,
   ProcessRewards,
   Referral,
   SharesBurnt,
@@ -110,28 +110,26 @@ export function createBurnDelegatedSharesEvent(
   return burnDelegatedSharesEvent
 }
 
-export function createCommunityAddedEvent(account: Address): CommunityAdded {
-  let communityAddedEvent = changetype<CommunityAdded>(newMockEvent())
+export function createPoolAddedEvent(account: Address): PoolAdded {
+  let poolAddedEvent = changetype<PoolAdded>(newMockEvent())
 
-  communityAddedEvent.parameters = new Array()
+  poolAddedEvent.parameters = new Array()
 
-  communityAddedEvent.parameters.push(
-    new ethereum.EventParam('account', ethereum.Value.fromAddress(account))
-  )
+  poolAddedEvent.parameters.push(new ethereum.EventParam('account', ethereum.Value.fromAddress(account)))
 
-  return communityAddedEvent
+  return poolAddedEvent
 }
 
-export function createCommunityRemovedEvent(account: Address): CommunityRemoved {
-  let communityRemovedEvent = changetype<CommunityRemoved>(newMockEvent())
+export function createPoolRemovedEvent(account: Address): PoolRemoved {
+  let poolRemovedEvent = changetype<PoolRemoved>(newMockEvent())
 
-  communityRemovedEvent.parameters = new Array()
+  poolRemovedEvent.parameters = new Array()
 
-  communityRemovedEvent.parameters.push(
+  poolRemovedEvent.parameters.push(
     new ethereum.EventParam('account', ethereum.Value.fromAddress(account))
   )
 
-  return communityRemovedEvent
+  return poolRemovedEvent
 }
 
 export function createConsensusLayerBalanceUpdatedEvent(balance: BigInt): ConsensusLayerBalanceUpdated {
@@ -202,10 +200,10 @@ export function createProcessRewardsEvent(
   growthFactor: BigInt,
   stakeTogetherFee: BigInt,
   operatorFee: BigInt,
-  communityFee: BigInt,
+  poolFee: BigInt,
   stakeTogetherFeeShares: BigInt,
   operatorFeeShares: BigInt,
-  communityFeeShares: BigInt
+  poolFeeShares: BigInt
 ): ProcessRewards {
   let processRewardsEvent = changetype<ProcessRewards>(newMockEvent())
 
@@ -230,7 +228,7 @@ export function createProcessRewardsEvent(
     new ethereum.EventParam('operatorFee', ethereum.Value.fromUnsignedBigInt(operatorFee))
   )
   processRewardsEvent.parameters.push(
-    new ethereum.EventParam('communityFee', ethereum.Value.fromUnsignedBigInt(communityFee))
+    new ethereum.EventParam('poolFee', ethereum.Value.fromUnsignedBigInt(poolFee))
   )
   processRewardsEvent.parameters.push(
     new ethereum.EventParam(
@@ -242,7 +240,7 @@ export function createProcessRewardsEvent(
     new ethereum.EventParam('operatorFeeShares', ethereum.Value.fromUnsignedBigInt(operatorFeeShares))
   )
   processRewardsEvent.parameters.push(
-    new ethereum.EventParam('communityFeeShares', ethereum.Value.fromUnsignedBigInt(communityFeeShares))
+    new ethereum.EventParam('poolFeeShares', ethereum.Value.fromUnsignedBigInt(poolFeeShares))
   )
 
   return processRewardsEvent
