@@ -1,12 +1,6 @@
 import { BigInt } from '@graphprotocol/graph-ts'
 import { Account, Delegation, Pool, StakeTogether } from '../generated/schema'
-import {
-  poolBalance,
-  poolBufferBalance,
-  totalPooledEther,
-  totalSupply,
-  withdrawalsBalance
-} from './utils'
+import { poolBalance, totalPooledEther, totalSupply, withdrawalsBalance } from './utils'
 
 export function loadStakeTogether(): StakeTogether {
   let st = StakeTogether.load('st')
@@ -17,10 +11,8 @@ export function loadStakeTogether(): StakeTogether {
     st.beaconBalance = BigInt.fromI32(0)
     st.transientBalance = BigInt.fromI32(0)
     st.liquidityBufferBalance = BigInt.fromI32(0)
-    st.validatorBufferBalance = BigInt.fromI32(0)
 
     st.poolBalance = BigInt.fromI32(0)
-    st.poolBufferBalance = BigInt.fromI32(0)
     st.withdrawalsBalance = BigInt.fromI32(0)
 
     st.totalPooledEther = BigInt.fromI32(0)
@@ -37,6 +29,9 @@ export function loadStakeTogether(): StakeTogether {
     st.totalOperatorRewardsShares = BigInt.fromI32(0)
     st.totalStakeTogetherRewardsShares = BigInt.fromI32(0)
 
+    st.totalValidators = BigInt.fromI32(0)
+    st.validators = []
+
     st.save()
     return st
   }
@@ -47,7 +42,6 @@ export function loadStakeTogether(): StakeTogether {
 export function syncStakeTogether(): StakeTogether {
   let st = loadStakeTogether()
   st.poolBalance = poolBalance()
-  st.poolBufferBalance = poolBufferBalance()
   st.withdrawalsBalance = withdrawalsBalance()
   st.totalPooledEther = totalPooledEther()
   st.totalSupply = totalSupply()

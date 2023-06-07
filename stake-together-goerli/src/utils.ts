@@ -2,7 +2,7 @@ import { BigInt } from '@graphprotocol/graph-ts'
 import { loadAccount, loadStakeTogether } from './hooks'
 
 export const zeroAccount = '0x0000000000000000000000000000000000000000'
-export const contractAddress = '0xc34bab05746f4ba8dfb489a0c2a8cdc2c34eda74'
+export const contractAddress = '0x1b09577cb94906c0f2119a1c61919f6f055cbc74'
 
 export function poolBalance(): BigInt {
   let st = loadStakeTogether()
@@ -11,18 +11,12 @@ export function poolBalance(): BigInt {
     return BigInt.fromI32(1)
   }
 
-  return st.contractBalance.minus(st.liquidityBufferBalance).minus(st.validatorBufferBalance)
+  return st.contractBalance.minus(st.liquidityBufferBalance)
 }
 
 export function balanceOf(accountId: string): BigInt {
   let account = loadAccount(accountId)
   return pooledEthByShares(account.shares)
-}
-
-export function poolBufferBalance(): BigInt {
-  let st = loadStakeTogether()
-
-  return poolBalance().plus(st.validatorBufferBalance)
 }
 
 export function withdrawalsBalance(): BigInt {
@@ -38,7 +32,6 @@ export function totalPooledEther(): BigInt {
     .plus(st.transientBalance)
     .plus(st.beaconBalance)
     .minus(st.liquidityBufferBalance)
-    .minus(st.validatorBufferBalance)
 
   return total
 }

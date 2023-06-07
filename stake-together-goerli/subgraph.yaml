@@ -6,9 +6,9 @@ dataSources:
     name: StakeTogether
     network: goerli
     source:
-      address: '0xC34bAB05746f4Ba8dfB489a0c2A8cdC2C34eDA74'
+      address: '0x1B09577Cb94906c0f2119A1C61919F6f055CBC74'
       abi: StakeTogether
-      startBlock: 9130409
+      startBlock: 9130600
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -30,6 +30,10 @@ dataSources:
           handler: handleBurnDelegatedShares
         - event: BurnShares(indexed address,uint256)
           handler: handleBurnShares
+        - event: CreateValidator(indexed address,indexed uint256,bytes,bytes,bytes,bytes32)
+          handler: handleCreateValidator
+        - event: EtherReceived(indexed address,uint256)
+          handler: handleEtherReceived
         - event: SetBeaconBalance(uint256)
           handler: handleSetBeaconBalance
         - event: SetTransientBalance(uint256)
@@ -38,8 +42,6 @@ dataSources:
           handler: handleDepositLiquidityBuffer
         - event: DepositPool(indexed address,uint256,uint256,address,address)
           handler: handleDepositPool
-        - event: DepositValidatorBuffer(indexed address,uint256)
-          handler: handleDepositValidatorBuffer
         - event: MintShares(indexed address,indexed address,uint256)
           handler: handleMintShares
         - event: MintDelegatedShares(indexed address,indexed address,indexed address,uint256)
@@ -62,6 +64,4 @@ dataSources:
           handler: handleWithdrawLiquidityBuffer
         - event: WithdrawPool(indexed address,uint256,uint256,address)
           handler: handleWithdrawPool
-        - event: WithdrawValidatorBuffer(indexed address,uint256)
-          handler: handleWithdrawValidatorBuffer
       file: ./src/stake-together.ts
