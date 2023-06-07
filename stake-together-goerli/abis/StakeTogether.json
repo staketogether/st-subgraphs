@@ -1412,6 +1412,13 @@
     "type": "function"
   },
   {
+    "inputs": [],
+    "name": "validatorModuleAddress",
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [{ "internalType": "uint256", "name": "_amount", "type": "uint256" }],
     "name": "withdrawLiquidityBuffer",
     "outputs": [],
