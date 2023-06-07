@@ -9,10 +9,8 @@ type StakeTogether @entity {
   beaconBalance: BigInt!
   transientBalance: BigInt!
   liquidityBufferBalance: BigInt!
-  validatorBufferBalance: BigInt!
 
   poolBalance: BigInt!
-  poolBufferBalance: BigInt!
   withdrawalsBalance: BigInt!
   totalPooledEther: BigInt!
   totalSupply: BigInt!
@@ -27,6 +25,9 @@ type StakeTogether @entity {
   totalPoolRewardsShares: BigInt!
   totalOperatorRewardsShares: BigInt!
   totalStakeTogetherRewardsShares: BigInt!
+
+  totalValidators: BigInt!
+  validators: [Validator!]!
 }
 
 type Account @entity {
@@ -75,4 +76,17 @@ type Delegation @entity {
   delegationShares: BigInt!
 
   # delegationBalance: BigInt!
+}
+
+type Validator @entity(immutable: true) {
+  id: Bytes!
+  creator: Bytes!
+  amount: BigInt!
+  publicKey: Bytes!
+  withdrawalCredentials: Bytes!
+  signature: Bytes!
+  depositDataRoot: Bytes!
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
 }

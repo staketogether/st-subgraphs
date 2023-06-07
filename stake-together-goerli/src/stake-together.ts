@@ -4,9 +4,10 @@ import {
   Bootstrap,
   BurnDelegatedShares,
   BurnShares,
+  CreateValidator,
   DepositLiquidityBuffer,
   DepositPool,
-  DepositValidatorBuffer,
+  EtherReceived,
   MintDelegatedShares,
   MintOperatorRewards,
   MintPoolRewards,
@@ -18,8 +19,7 @@ import {
   SetTransientBalance,
   TransferShares,
   WithdrawLiquidityBuffer,
-  WithdrawPool,
-  WithdrawValidatorBuffer
+  WithdrawPool
 } from '../generated/StakeTogether/StakeTogether'
 import { loadAccount, loadDelegation, loadPool, loadStakeTogether, syncStakeTogether } from './hooks'
 import { balanceOf, contractAddress } from './utils'
@@ -67,20 +67,21 @@ export function handleWithdrawLiquidityBuffer(event: WithdrawLiquidityBuffer): v
   syncStakeTogether()
 }
 
-export function handleDepositValidatorBuffer(event: DepositValidatorBuffer): void {
+export function handleEtherReceived(event: EtherReceived): void {
   // StakeTogether ----------------------------------
   let st = loadStakeTogether()
   st.contractBalance = st.contractBalance.plus(event.params.amount)
-  st.validatorBufferBalance = st.validatorBufferBalance.plus(event.params.amount)
   st.save()
   syncStakeTogether()
 }
 
-export function handleWithdrawValidatorBuffer(event: WithdrawValidatorBuffer): void {
+export function handleCreateValidator(event: CreateValidator): void {
   // StakeTogether ----------------------------------
   let st = loadStakeTogether()
   st.contractBalance = st.contractBalance.minus(event.params.amount)
-  st.validatorBufferBalance = st.validatorBufferBalance.minus(event.params.amount)
+  st.transientBalance = st.transientBalance.plus(event.params.amount)
+  st.totalValidators = st.totalValidators.plus(BigInt.fromI32(1))
+  // Todo: Map Validators
   st.save()
   syncStakeTogether()
 }
