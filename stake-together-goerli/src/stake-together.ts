@@ -22,7 +22,7 @@ import {
   WithdrawPool
 } from '../generated/StakeTogether/StakeTogether'
 import { loadAccount, loadDelegation, loadPool, loadStakeTogether, syncStakeTogether } from './hooks'
-import { balanceOf, contractAddress } from './utils'
+import { balanceOf, contractAddress, pooledEthByShares } from './utils'
 
 export function handleBootstrap(event: Bootstrap): void {
   let st = loadStakeTogether()
@@ -191,6 +191,8 @@ export function handleMintDelegatedShares(event: MintDelegatedShares): void {
   let pool = loadPool(poolId)
   pool.delegatedShares = pool.delegatedShares.plus(event.params.sharesAmount)
   pool.save()
+  pool.delegatedBalance = pooledEthByShares(pool.delegatedShares)
+  pool.save()
 
   // Delegation -------------------------------------
   let accountToId = event.params.to.toHexString()
@@ -214,6 +216,8 @@ export function handleBurnDelegatedShares(event: BurnDelegatedShares): void {
   let poolId = event.params.delegated.toHexString()
   let pool = loadPool(poolId)
   pool.delegatedShares = pool.delegatedShares.minus(event.params.sharesAmount)
+  pool.save()
+  pool.delegatedBalance = pooledEthByShares(pool.delegatedShares)
   pool.save()
 
   // Delegation -------------------------------------
@@ -265,6 +269,8 @@ export function handleMintPoolRewards(event: MintPoolRewards): void {
   let poolId = event.params.to.toHexString()
   let pool = loadPool(poolId)
   pool.rewardsShares = pool.rewardsShares.plus(event.params.sharesAmount)
+  pool.save()
+  pool.rewardsBalance = pooledEthByShares(pool.rewardsShares)
   pool.save()
 }
 

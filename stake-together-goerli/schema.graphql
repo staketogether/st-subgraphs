@@ -59,8 +59,8 @@ type Pool @entity {
   delegatedShares: BigInt!
   rewardsShares: BigInt!
 
-  # delegatedBalance: BigInt!
-  # rewardsBalance: BigInt!
+  delegatedBalance: BigInt!
+  rewardsBalance: BigInt!
 
   receivedDelegationsCount: BigInt!
   delegations: [Delegation!]! @derivedFrom(field: "delegated")
