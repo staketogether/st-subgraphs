@@ -80,7 +80,6 @@ export function loadPool(id: string): Pool {
     pool.receivedDelegationsCount = BigInt.fromI32(0)
     pool.delegatedShares = BigInt.fromI32(0)
     pool.delegatedBalance = BigInt.fromI32(0)
-
     pool.rewardsShares = BigInt.fromI32(0)
     pool.rewardsBalance = BigInt.fromI32(0)
     pool.active = true
