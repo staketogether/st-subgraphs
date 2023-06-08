@@ -74,8 +74,7 @@ type Delegation @entity {
   delegated: Pool!
 
   delegationShares: BigInt!
-
-  # delegationBalance: BigInt!
+  delegationBalance: BigInt!
 }
 
 type Validator @entity(immutable: true) {

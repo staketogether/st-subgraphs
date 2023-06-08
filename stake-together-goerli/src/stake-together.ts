@@ -22,7 +22,7 @@ import {
   WithdrawPool
 } from '../generated/StakeTogether/StakeTogether'
 import { loadAccount, loadDelegation, loadPool, loadStakeTogether, syncStakeTogether } from './hooks'
-import { balanceOf, contractAddress } from './utils'
+import { balanceOf, contractAddress, pooledEthByShares } from './utils'
 
 export function handleBootstrap(event: Bootstrap): void {
   let st = loadStakeTogether()
@@ -197,6 +197,8 @@ export function handleMintDelegatedShares(event: MintDelegatedShares): void {
   let delegation = loadDelegation(accountToId, poolId)
   delegation.delegationShares = delegation.delegationShares.plus(event.params.sharesAmount)
   delegation.save()
+  delegation.delegationBalance = pooledEthByShares(delegation.delegationShares)
+  delegation.save()
 }
 
 export function handleBurnDelegatedShares(event: BurnDelegatedShares): void {
@@ -221,6 +223,8 @@ export function handleBurnDelegatedShares(event: BurnDelegatedShares): void {
   let accountFrom = loadAccount(accountFromId)
   let delegation = loadDelegation(accountFromId, poolId)
   delegation.delegationShares = delegation.delegationShares.minus(event.params.sharesAmount)
+  delegation.save()
+  delegation.delegationBalance = pooledEthByShares(delegation.delegationShares)
   delegation.save()
 
   if (delegation.delegationShares.le(BigInt.fromI32(0))) {

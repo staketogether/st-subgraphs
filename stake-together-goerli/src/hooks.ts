@@ -96,6 +96,7 @@ export function loadDelegation(accountId: string, poolId: string): Delegation {
     delegation.delegate = accountId
     delegation.delegated = poolId
     delegation.delegationShares = BigInt.fromI32(0)
+    delegation.delegationBalance = BigInt.fromI32(0)
     delegation.save()
 
     let account = loadAccount(accountId)
