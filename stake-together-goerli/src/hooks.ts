@@ -15,6 +15,8 @@ export function loadStakeTogether(): StakeTogether {
     st.poolBalance = BigInt.fromI32(0)
     st.withdrawalsBalance = BigInt.fromI32(0)
 
+    st.minDepositAmount = BigInt.fromI32(1)
+
     st.totalPooledEther = BigInt.fromI32(0)
     st.totalSupply = BigInt.fromI32(0)
 

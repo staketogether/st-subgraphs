@@ -54,6 +54,8 @@ dataSources:
           handler: handleMintStakeTogetherRewards
         - event: RemovePool(address)
           handler: handleRemovePool
+        - event: SetMinDepositPoolAmount(uint256)
+          handler: handleSetMinDepositPoolAmount
         - event: SetOperatorFeeAddress(indexed address)
           handler: handleSetOperatorFeeAddress
         - event: SetStakeTogetherFeeAddress(indexed address)

@@ -13,7 +13,7 @@ import {
   MintPoolRewards,
   MintStakeTogetherRewards,
   RemovePool,
-  SetBeaconBalance,
+  SetBeaconBalance, SetMinDepositPoolAmount,
   SetOperatorFeeAddress,
   SetStakeTogetherFeeAddress,
   SetTransientBalance,
@@ -294,6 +294,13 @@ export function handleSetOperatorFeeAddress(event: SetOperatorFeeAddress): void 
 export function handleSetStakeTogetherFeeAddress(event: SetStakeTogetherFeeAddress): void {
   let st = loadStakeTogether()
   st.stakeTogetherFeeAddress = event.params.to.toHexString()
+  st.save()
+  syncStakeTogether()
+}
+
+export function handleSetMinDepositPoolAmount(event: SetMinDepositPoolAmount): void {
+  let st = loadStakeTogether()
+  st.minDepositAmount = event.params.amount
   st.save()
   syncStakeTogether()
 }
