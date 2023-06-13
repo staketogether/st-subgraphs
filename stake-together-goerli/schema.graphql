@@ -9,12 +9,13 @@ type StakeTogether @entity {
   beaconBalance: BigInt!
   transientBalance: BigInt!
   liquidityBufferBalance: BigInt!
-
   poolBalance: BigInt!
   withdrawalsBalance: BigInt!
+
+  minDepositAmount: BigInt!
+
   totalPooledEther: BigInt!
   totalSupply: BigInt!
-
   totalShares: BigInt!
   totalDelegatedShares: BigInt!
   totalRewardsShares: BigInt!
